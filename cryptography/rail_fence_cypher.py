@@ -24,18 +24,17 @@ def encrypt(message, key):
 		while index < limit:
 			encrypted += message[index]
 			
-			if take_gap and gap != 0:
-				index += gap
+			if take_gap and gap != 0 and k != 1:
+				index += gap * 2
 			else:
-				index += period - origin
+				index += period
 			
 			take_gap = not take_gap
-			print("Inner loop " + str(index)) 
 		
+		print("")
 		origin += 1
 		k -= 1
 		gap += 1
-		print("Outer loop " + str(k))
 	
 	return encrypted
 
