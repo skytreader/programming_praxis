@@ -1,10 +1,16 @@
 #! usr/bin/env python
 
+import re
+
 """
 http://programmingpraxis.com/2009/06/02/pig-latin/
 
 TODO: Test for varying cases within text.
+TODO: Use regex for stripping!
 """
+
+ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+ALPHABET = "".join([ALPHABET, ALPHABET.upper()])
 
 def eng2pigl_word(word):
 	if word[0] in "aeiouAEIOU":
@@ -12,9 +18,31 @@ def eng2pigl_word(word):
 	else:
 		return word[1:len(word)] + word[0] + "ay"
 
+def strip_non_letter(word):
+	match = re.match(r"^([a-zA-Z]+)([^a-zA-Z]*)$", word)
+	puncs = ""
+	stripped = ""
+	
+	if match is None:
+		stripped = word
+	else:
+		stripped = match.group(1)
+		puncs = match.group(2)
+	
+	return [stripped, puncs]
+
 def translate(translation, text):
+	"""
+	This works assuming that all words are properly spaced and
+	that all possible punctuation are found at the end of the
+	word.
+	"""
 	all_words = text.split(" ")
-	translated = list(map(translation, all_words))
+	strip_parsing = list(map(strip_non_letter, all_words))
+	get_words = list(map(lambda x: x[0], strip_parsing))
+	get_puncs = list(map(lambda x: x[1], strip_parsing))
+	translated = list(map(translation, get_words))
+	
 	return " ".join(translated)
 
 def eng2pigl(text):
