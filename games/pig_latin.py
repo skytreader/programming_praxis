@@ -12,11 +12,20 @@ TODO: Use regex for stripping!
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 ALPHABET = "".join([ALPHABET, ALPHABET.upper()])
 
-def eng2pigl_word(word):
-	if word[0] in "aeiouAEIOU":
-		return word + "way"
+def eng2pigl_word(w):
+	prefix_match = re.match(r"^([^a-zA-Z]*)([a-zA-Z]+)$", w)
+	prefix = ""
+	
+	if prefix_match is None:
+		word = w
 	else:
-		return word[1:len(word)] + word[0] + "ay"
+		word = prefix_match.group(2)
+		prefix = prefix_match.group(1)
+	
+	if word[0] in "aeiouAEIOU":
+		return prefix + word + "way"
+	else:
+		return prefix + word[1:len(word)] + word[0] + "ay"
 
 def strip_non_letter(word):
 	match = re.match(r"^([a-zA-Z]+)([^a-zA-Z]*)$", word)
@@ -42,6 +51,12 @@ def translate(translation, text):
 	get_words = list(map(lambda x: x[0], strip_parsing))
 	get_puncs = list(map(lambda x: x[1], strip_parsing))
 	translated = list(map(translation, get_words))
+	
+	word_index = 0
+	
+	for punctuations in get_puncs:
+		translated[word_index] += punctuations
+		word_index += 1
 	
 	return " ".join(translated)
 
@@ -69,3 +84,4 @@ def pigl2eng(text):
 if __name__ == "__main__":
 	print(eng2pigl("nix scram stupid art"))
 	print(pigl2eng(eng2pigl("Pig Latin")))
+	print(eng2pigl("I'm not at all disappointed Mycroft, Watson, and Lestrade... ~Sherlock Holmes."))
