@@ -9,8 +9,9 @@ TODO: Test for varying cases within text.
 TODO: Use regex for stripping!
 """
 
-ALPHABET = "abcdefghijklmnopqrstuvwxyz"
-ALPHABET = "".join([ALPHABET, ALPHABET.upper()])
+LOWER = "abcdefghijklmnopqrstuvwxyz"
+UPPER = LOWER.upper()
+ALPHABET = LOWER + UPPER
 
 def eng2pigl_word(w):
 	prefix_match = re.match(r"^([^a-zA-Z]*)([a-zA-Z]+)$", w)
@@ -49,6 +50,7 @@ def translate(translation, text):
 	all_words = text.split(" ")
 	strip_parsing = list(map(strip_non_letter, all_words))
 	get_words = list(map(lambda x: x[0], strip_parsing))
+	capitals = list(map(lambda word: word[0] in UPPER, get_words))
 	get_puncs = list(map(lambda x: x[1], strip_parsing))
 	translated = list(map(translation, get_words))
 	
@@ -56,6 +58,11 @@ def translate(translation, text):
 	
 	for punctuations in get_puncs:
 		translated[word_index] += punctuations
+		
+		if capitals[word_index]:
+			this_word = translated[word_index]
+			translated[word_index] = this_word[0].upper() + this_word[1:len(this_word)].lower()
+		
 		word_index += 1
 	
 	return " ".join(translated)
