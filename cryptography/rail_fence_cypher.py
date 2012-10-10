@@ -52,6 +52,7 @@ def decrypt(message, key):
 	while k != 0:
 		period = (k - 1) * 2
 		char_take = math.floor(msg_len / period)
+		# need to know the "insert index"
 
 if __name__ == "__main__":
 	print(encrypt("PROGRAMMING PRAXIS", 4))
