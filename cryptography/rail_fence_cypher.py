@@ -31,7 +31,6 @@ def encrypt(message, key):
 			
 			take_gap = not take_gap
 		
-		print("")
 		origin += 1
 		k -= 1
 		gap += 1
@@ -40,3 +39,4 @@ def encrypt(message, key):
 
 if __name__ == "__main__":
 	print(encrypt("PROGRAMMING PRAXIS", 4))
+	print(encrypt("PROGRAMMING PRAXIS", 2))
