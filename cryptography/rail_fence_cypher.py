@@ -7,12 +7,20 @@ http://programmingpraxis.com/2009/03/31/rail-fence-cipher/
 """
 
 def encrypt(message, key):
+	encrypted = ""
+	seq = rail_fence_sequence(len(message), key)
+	
+	for seq_no in seq:
+		encrypted += message[seq_no]
+		
+	return encrypted
+
+def rail_fence_sequence(msg_len, key):
 	k = key
 	origin = 0
 	gap = 0
-	encrypted = ""
-	limit = len(message)
 	gap_limit = (key - 1) * 2
+	sequence = []
 	
 	while k != 0:
 		period = (k - 1) * 2
@@ -23,8 +31,8 @@ def encrypt(message, key):
 		index = origin
 		take_gap = False
 		
-		while index < limit:
-			encrypted += message[index]
+		while index < msg_len:
+			sequence.append(index)
 			
 			if take_gap and gap != 0 and k != 1:
 				index += gap * 2
@@ -37,23 +45,22 @@ def encrypt(message, key):
 		k -= 1
 		gap += 1
 	
-	return encrypted
-
-def str_insert(main_string, insert_string, index):
-	listed = list(main_string)
-	listed.insert(index, insert_string)
-	return "".join(listed)
+	return sequence
 
 def decrypt(message, key):
-	k = key
 	msg_len = len(message)
-	decrypted = ""
+	decrypted = ['' for i in range(msg_len)]
+	seq = rail_fence_sequence(msg_len, key)
+	index_runner = 0
 	
-	while k != 0:
-		period = (k - 1) * 2
-		char_take = math.floor(msg_len / period)
-		# need to know the "insert index"
+	for letter in message:
+		decrypted[seq[index_runner]] = letter
+		index_runner += 1
+	
+	return "".join(decrypted)
 
 if __name__ == "__main__":
 	print(encrypt("PROGRAMMING PRAXIS", 4))
 	print(encrypt("PROGRAMMING PRAXIS", 2))
+	print(decrypt("PMPRAM RSORIGAIGNX", 4))
+	print(decrypt("PORMIGPAIRGAMN RXS", 2))
