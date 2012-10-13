@@ -68,6 +68,15 @@ def digrammify(msg):
 	
 	return digram_chunks
 
+def is_same_row(digram, key_square):
+	pass
+
+def is_same_col(digram, key_square):
+	pass
+
+def encipher(msg, key):
+	pass
+
 if __name__ == "__main__":
 	print(generate_key_square("PLAYFAIR"))
 	print(digrammify("PROGRAMMING PRAXIS"))
