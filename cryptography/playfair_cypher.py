@@ -69,10 +69,25 @@ def digrammify(msg):
 	return digram_chunks
 
 def is_same_row(digram, key_square):
-	pass
+	for row in key_square:
+		if row.find(digram[0]) >= 0 and row.find(digram[1]) >= 0:
+			return True
+	
+	return False
+
+def get_col(letter, key_square):
+	for row in key_square:
+		find = row.find(letter)
+		if find >= 0:
+			return find
+	
+	return -1
 
 def is_same_col(digram, key_square):
-	pass
+	col1 = get_col(digram[0], key_square)
+	col2 = get_col(digram[1], key_square)
+	
+	return col1 >= 0 and col2 >= 0 and col1 == col2
 
 def encipher(msg, key):
 	pass
