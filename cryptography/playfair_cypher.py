@@ -79,14 +79,14 @@ def is_same_row(digram, key_square):
 	for row in key_square:
 		d1 = row.find(digram[0])
 		d2 = row.find(digram[1])
-		if d0 >= 0 and d1 >= 0:
+		if d1 >= 0 and d2 >= 0:
 			return ((row_index, d1), (row_index, d2))
 		
 		row_index += 1
 	
 	return False
 
-def get_col(letter, key_square):
+def find_col(letter, key_square):
 	"""Sure to return a good value"""
 	for row in key_square:
 		find = row.find(letter)
@@ -107,17 +107,47 @@ def is_same_col(digram, key_square):
 	in the key_square if they are in the same col. Otherwise,
 	return False.
 	"""
-	col1 = get_col(digram[0], key_square)
-	col2 = get_col(digram[1], key_square)
+	col1 = find_col(digram[0], key_square)
+	col2 = find_col(digram[1], key_square)
 	
 	if col1 >= 0 and col2 >= 0 and col1 == col2:
 		row1 = find_row(digram[0], key_square)
 		row2 = find_row(digram[1], key_square)
 		return ((row1, col1), (row2, col2))
+	else:
+		return False
 
 def encipher(msg, key):
-	pass
+	digrams = digrammify(msg)
+	key_square = generate_key_square(key)
+	enciphered = ""
+	
+	for digram in digrams:
+		same_row = is_same_row(digram, key_square)
+		same_col = is_same_col(digram, key_square)
+		
+		if same_row:
+			row = same_row[0][0]
+			col1 = (same_row[0][1] + 1) % 5
+			col2 = (same_row[1][1] + 1) % 5
+			
+			enciphered += key_square[row][col1] + key_square[row][col2]
+		elif same_col:	
+			col = same_col[0][1]
+			row1 = (same_col[0][0] + 1) % 5
+			row2 = (same_col[1][0] + 1) % 5
+			
+			enciphered += key_square[row1][col] + key_square[row2][col]
+		else:
+			d1row = find_row(digram[0], key_square)
+			d1col = find_col(digram[0], key_square)
+			
+			d2row = find_row(digram[1], key_square)
+			d2col = find_col(digram[1], key_square)
+			
+			enciphered += key_square[d1row][d2col] + key_square[d2row][d1col]
+	
+	return enciphered
 
 if __name__ == "__main__":
-	print(generate_key_square("PLAYFAIR"))
-	print(digrammify("PROGRAMMING PRAXIS"))
+	print(encipher("PROGRAMMING PRAXIS", "PLAYFAIR"))
