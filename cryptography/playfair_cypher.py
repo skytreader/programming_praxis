@@ -77,22 +77,29 @@ def is_same_row(digram, key_square):
 	row_index = 0
 	
 	for row in key_square:
-		d0 = row.find(digram[0])
-		d1 = row.find(digram[1])
+		d1 = row.find(digram[0])
+		d2 = row.find(digram[1])
 		if d0 >= 0 and d1 >= 0:
-			return ((row_index, d0), (row_index, d1))
+			return ((row_index, d1), (row_index, d2))
 		
 		row_index += 1
 	
 	return False
 
 def get_col(letter, key_square):
+	"""Sure to return a good value"""
 	for row in key_square:
 		find = row.find(letter)
 		if find >= 0:
 			return find
+
+def find_row(letter, key_square):
+	"""Sure to return a good value"""
+	limit = len(key_square)
 	
-	return -1
+	for i in range(limit):
+		if letter in key_square[i]:
+			return i
 
 def is_same_col(digram, key_square):
 	"""
@@ -104,7 +111,9 @@ def is_same_col(digram, key_square):
 	col2 = get_col(digram[1], key_square)
 	
 	if col1 >= 0 and col2 >= 0 and col1 == col2:
-		return ((), ())
+		row1 = find_row(digram[0], key_square)
+		row2 = find_row(digram[1], key_square)
+		return ((row1, col1), (row2, col2))
 
 def encipher(msg, key):
 	pass
