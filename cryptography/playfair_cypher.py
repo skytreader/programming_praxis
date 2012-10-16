@@ -149,5 +149,8 @@ def encipher(msg, key):
 	
 	return enciphered
 
+def decipher(msg, key):
+	
+
 if __name__ == "__main__":
 	print(encipher("PROGRAMMING PRAXIS", "PLAYFAIR"))
