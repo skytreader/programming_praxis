@@ -150,6 +150,9 @@ def encipher(msg, key):
 	return enciphered
 
 def decipher(msg, key):
+	"""
+	Decipher cases, what of I -> J and X paddings?
+	"""
 	digrams = digrammify(msg)
 	key_square = generate_key_square(key)
 	deciphered = ""
@@ -177,7 +180,7 @@ def decipher(msg, key):
 			d2row = find_row(digram[1], key_square)
 			d2col = find_row(digram[1], key_square)
 			
-			deciphered += key_square[d2row][d1col] + key_square[d1row][d2col]
+			deciphered += key_square[d1row][d2col] + key_square[d2row][d1col]
 	
 	return deciphered
 
