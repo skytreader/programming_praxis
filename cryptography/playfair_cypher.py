@@ -150,7 +150,37 @@ def encipher(msg, key):
 	return enciphered
 
 def decipher(msg, key):
+	digrams = digrammify(msg)
+	key_square = generate_key_square(key)
+	deciphered = ""
 	
+	for digram in digrams:
+		same_row = is_same_row(digram, key_square)
+		same_col = is_same_col(digram, key_square)
+		
+		if same_row:
+			row = same_row[0][0]
+			col1 = (same_row[0][1] - 1) % 5
+			col2 = (same_row[1][1] - 1) % 5
+			
+			deciphered += key_square[row][col1] + key_square[row][col2]
+		elif same_col:
+			col = same_col[0][1]
+			row1 = (same_col[0][0] - 1) % 5
+			row2 = (same_col[1][0] - 1) % 5
+			
+			deciphered += key_square[row1][col] + key_square[row2][col]
+		else:
+			d1row = find_row(digram[0], key_square)
+			d1col = find_col(digram[0], key_square)
+			
+			d2row = find_row(digram[1], key_square)
+			d2col = find_row(digram[1], key_square)
+			
+			deciphered += key_square[d2row][d1col] + key_square[d1row][d2col]
+	
+	return deciphered
 
 if __name__ == "__main__":
 	print(encipher("PROGRAMMING PRAXIS", "PLAYFAIR"))
+	print(decipher(encipher("PROGRAMMING PRAXIS", "PLAYFAIR"), "PLAYFAIR"))
