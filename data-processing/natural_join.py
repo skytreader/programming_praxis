@@ -22,11 +22,15 @@ class Table(object):
 		
 		# A list-of-lists
 		self.table = []
+		first = True
 		
 		# FIXME Remember that the first line is actually the col names.
 		with open(filename, "r") as table_file:
 			for table_row in table_file:
-				self.table = table_row.split("	")
+				if not first:
+					self.table.append(table_row.split("	"))
+				
+				first = False
 	
 	def get_key(self, rowno):
 		"""
@@ -41,12 +45,10 @@ def row_by_key(table, key):
 	with the given key.
 	"""
 	fitting_rows = []
-	first = True
 	
 	for row in table:
-		if row[0] == key and not first:
+		if row[0] == key:
 			fitting_rows.append(row)
-			first = False
 	
 	return fitting_rows
 
@@ -60,7 +62,8 @@ def natural_join(table1, table2):
 		matching_rows = row_by_key(table2, row[0])
 		
 		for match in matching_rows:
-			joined.append(row.extend(match[1:len(match)]))
+			row.extend(match[1:len(match)])
+			joined.append(row)
 	
 	return joined
 
