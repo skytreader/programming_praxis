@@ -1,0 +1,5 @@
+Key	col1	col2
+A	foo	bar
+A	spam	eggs
+B	alice	bob
+B	bob	eve

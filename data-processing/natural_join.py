@@ -1,5 +1,7 @@
 #! usr/bin/env python
 
+import sys
+
 """
 http://programmingpraxis.com/2010/06/15/natural-join/
 """
@@ -19,19 +21,19 @@ class Table(object):
 	def __init__(self, filename):
 		
 		# A list-of-lists
-		self.rows = []
+		self.table = []
 		
 		# FIXME Remember that the first line is actually the col names.
 		with open(filename, "r") as table_file:
 			for table_row in table_file:
-				self.rows = table_row.split("	")
+				self.table = table_row.split("	")
 	
 	def get_key(self, rowno):
 		"""
 		Returns the contents of the key field of the specified
 		row.
 		"""
-		return self.rows[rowno][0]
+		return self.table[rowno][0]
 
 def row_by_key(table, key):
 	"""
@@ -39,10 +41,12 @@ def row_by_key(table, key):
 	with the given key.
 	"""
 	fitting_rows = []
+	first = True
 	
 	for row in table:
-		if row[0] == key:
+		if row[0] == key and not first:
 			fitting_rows.append(row)
+			first = False
 	
 	return fitting_rows
 
@@ -59,3 +63,8 @@ def natural_join(table1, table2):
 			joined.append(row.extend(match[1:len(match)]))
 	
 	return joined
+
+if __name__ == "__main__":
+	table1 = Table(sys.argv[1])
+	table2 = Table(sys.argv[2])
+	print(natural_join(table1.table, table2.table))
