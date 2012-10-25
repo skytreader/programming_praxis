@@ -33,8 +33,29 @@ class Table(object):
 		"""
 		return self.rows[rowno][0]
 
+def row_by_key(table, key):
+	"""
+	Returns a list of all the rows in the given table associated
+	with the given key.
+	"""
+	fitting_rows = []
+	
+	for row in table:
+		if row[0] == key:
+			fitting_rows.append(row)
+	
+	return fitting_rows
+
 def natural_join(table1, table2):
 	"""
 	Given two tables, join them on their keys.
 	"""
-	pass
+	joined = []
+	
+	for row in table1:
+		matching_rows = row_by_key(table2, row[0])
+		
+		for match in matching_rows:
+			joined.append(row.extend(match[1:len(match)]))
+	
+	return joined
