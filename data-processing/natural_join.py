@@ -24,7 +24,6 @@ class Table(object):
 		self.table = []
 		first = True
 		
-		# FIXME Remember that the first line is actually the col names.
 		with open(filename, "r") as table_file:
 			for table_row in table_file:
 				if not first:

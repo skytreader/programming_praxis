@@ -1,5 +1,7 @@
 #! usr/bin/env python
 
+import math
+
 """
 http://programmingpraxis.com/2009/06/30/steve-yegges-phone-screen-coding-exercises/
 """
@@ -44,7 +46,13 @@ def mul_table(n, m):
 	return table
 
 def text_file_summation(filename):
-	pass
+	summation = 0
+	
+	with open(filename, "r") as int_file:
+		for int_line in int_file:
+			summation += int(int_line)
+	
+	return summation
 
 def odd_summation(lower_limit, upper_limit):
 	summation = 0
@@ -56,6 +64,31 @@ def odd_summation(lower_limit, upper_limit):
 		lower_limit += 1
 	
 	return summation
+
+def largest_int(intlist):
+	max_val = float("-inf")
+	
+	for i in intlist:
+		if i > max_val:
+			max_val = i
+	
+	return max_val
+
+def to_hex(dec):
+	hex_alphabet = "0123456789abcdef"
+	hexstring = ""
+	
+	while dec >= 0:
+		hexstring += hex_alphabet[dec % 16]
+		dec = math.floor(dec / 16)
+		
+		if dec == 0:
+			break
+	
+	return hexstring
+
+def to_hex_string(r, g, b):
+	return "".join([to_hex(r), to_hex(g), to_hex(b)])
 
 if __name__ == "__main__":
 	print("==========String reversal============")
@@ -69,7 +102,15 @@ if __name__ == "__main__":
 	print(mul_table(12, 12))
 	
 	print("==========Text file summation============")
-	print("not implemented yet")
+	print(text_file_summation("intfile.txt"))
 	
 	print("==========Odd summation============")
 	print(odd_summation(1, 99))
+	
+	print("==========Largest int============")
+	print(largest_int([0, 1, 2, 3, 4, 5, 2, 3]))
+	
+	print("==========Hex conversion============")
+	print(to_hex_string(255, 255, 255))
+	print(to_hex_string(0, 0, 0))
+	print(to_hex_string(254, 54, 33))
