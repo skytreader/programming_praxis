@@ -1,7 +1,7 @@
 #! usr/bin/env python
 
 """
-http://programmingpraxis.com/contents/themes/
+http://programmingpraxis.com/2012/06/01/square-roots/
 """
 
 THRESHOLD = 0.000001
@@ -29,7 +29,7 @@ def bisection(x):
 	
 	return midpoint
 
-def hero(x, initial_candidate = None):
+def hero(x):
 	lower_limit = 1
 	upper_limit = x
 	prev_cand_root = 0
@@ -49,6 +49,18 @@ def hero(x, initial_candidate = None):
 	
 	return candidate_root
 
+def newtons_method(x):	
+	candidate_root = ((x + 1) / 2)
+	candidate_square = candidate_root ** 2
+	prev_cand_root = 0
+	
+	while not within_threshold(abs(candidate_root - x)) and \
+			not within_threshold(abs(candidate_root - prev_cand_root)):
+		prev_cand_root = candidate_root
+		candidate_root -= (candidate_root ** 2 - x) / (2 * x)
+	
+	return candidate_root
+
 if __name__ == "__main__":
 	tests = [4, 5, 16, 23, 40, 2, 167, 125348]
 	print("THRESHOLD: " + str(THRESHOLD))
@@ -58,3 +70,6 @@ if __name__ == "__main__":
 	print("==========HERO'S==========")
 	for test_case in tests:
 		print("sqrt(" + str(test_case) + ") = " + str(hero(test_case)))
+	print("==========NEWTON'S==========")
+	for test_case in tests:
+		print("sqrt(" + str(test_case) + ") = " + str(newtons_method(test_case)))
