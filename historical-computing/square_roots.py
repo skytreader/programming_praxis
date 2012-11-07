@@ -80,7 +80,7 @@ def reduce_to_range(x):
 	return (reduced_number, division_count)
 
 def optimized_newtons(x):
-	pass
+	reduction = reduce_to_range(x)
 
 if __name__ == "__main__":
 	tests = [4, 5, 16, 23, 40, 2, 167, 125348]
