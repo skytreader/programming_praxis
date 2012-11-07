@@ -61,6 +61,27 @@ def newtons_method(x):
 	
 	return candidate_root
 
+def reduce_to_range(x):
+	"""
+	FIXME Assumption: x > 2
+	
+	Reduces a number x to a number in the range [1, 2) by repeated division
+	(see FIXME Assumption above).
+	
+	An iterable with two elements: the first one being t
+	"""
+	reduced_number = x
+	division_count = 0
+	
+	while reduced_number > 2 and not reduced_number < 1:
+		reduced_number /= 2
+		division_count += 1
+	
+	return (reduced_number, division_count)
+
+def optimized_newtons(x):
+	pass
+
 if __name__ == "__main__":
 	tests = [4, 5, 16, 23, 40, 2, 167, 125348]
 	print("THRESHOLD: " + str(THRESHOLD))
