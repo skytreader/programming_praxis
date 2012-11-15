@@ -30,7 +30,7 @@ def bisection(x):
 	
 	return midpoint
 
-def hero(x, initial_candidate = None):
+def hero(x):
 	lower_limit = 1
 	upper_limit = x
 	prev_cand_root = 0
@@ -50,6 +50,39 @@ def hero(x, initial_candidate = None):
 	
 	return candidate_root
 
+def newtons_method(x):	
+	candidate_root = ((x + 1) / 2)
+	candidate_square = candidate_root ** 2
+	prev_cand_root = 0
+	
+	while not within_threshold(abs(candidate_root - x)) and \
+			not within_threshold(abs(candidate_root - prev_cand_root)):
+		prev_cand_root = candidate_root
+		candidate_root -= (candidate_root ** 2 - x) / (2 * x)
+	
+	return candidate_root
+
+def reduce_to_range(x):
+	"""
+	FIXME Assumption: x > 2
+	
+	Reduces a number x to a number in the range [1, 2) by repeated division
+	(see FIXME Assumption above).
+	
+	An iterable with two elements: the first one being t
+	"""
+	reduced_number = x
+	division_count = 0
+	
+	while reduced_number > 2 and not reduced_number < 1:
+		reduced_number /= 2
+		division_count += 1
+	
+	return (reduced_number, division_count)
+
+def optimized_newtons(x):
+	reduction = reduce_to_range(x)
+
 if __name__ == "__main__":
 	tests = [4, 5, 16, 23, 40, 2, 167, 125348]
 	print("THRESHOLD: " + str(THRESHOLD))
@@ -59,3 +92,6 @@ if __name__ == "__main__":
 	print("==========HERO'S==========")
 	for test_case in tests:
 		print("sqrt(" + str(test_case) + ") = " + str(hero(test_case)))
+	print("==========NEWTON'S==========")
+	for test_case in tests:
+		print("sqrt(" + str(test_case) + ") = " + str(newtons_method(test_case)))
