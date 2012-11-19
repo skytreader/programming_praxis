@@ -1,7 +1,8 @@
 #! usr/bin/env python
 
 """
-http://programmingpraxis.com/2012/06/01/square-roots/
+http://programmingpraxis.com/contents/themes/
+UNFINISHED
 """
 
 THRESHOLD = 0.000001

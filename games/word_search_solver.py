@@ -2,6 +2,7 @@
 
 """
 http://programmingpraxis.com/2009/05/26/word-search-solver/
+UNFINISHED
 """
 
 def search_startswith(prefix, word_set):
