@@ -63,24 +63,39 @@ def newtons_method(x):
 
 def reduce_to_range(x):
 	"""
-	FIXME Assumption: x > 2
-	
 	Reduces a number x to a number in the range [1, 2) by repeated division
-	(see FIXME Assumption above).
+	or multiplication.
 	
-	An iterable with two elements: the first one being t
+	An iterable with two elements: the first one being the reduced number and
+	the next one being another iterable of True and False. The nth element of
+	this iterable is True if for the nth iteration of this function,
+	MULTIPLICATION was applied. Otherwise, it is False and DIVISION was applied.
 	"""
 	reduced_number = x
-	division_count = 0
+	reduction_path = []
 	
-	while reduced_number > 2 and not reduced_number < 1:
-		reduced_number /= 2
-		division_count += 1
+	while reduced_number > 2 or reduced_number < 1:
+		if reduced_number > 2:
+			reduced_number /= 2
+			reduction_path.append(False)
+		elif reduced_number < 1:
+			reduced_number *= 2
+			reduction_path.append(True)
 	
-	return (reduced_number, division_count)
+	return (reduced_number, reduction_path)
 
 def optimized_newtons(x):
 	reduction = reduce_to_range(x)
+	sqrt_2 = newtons_method(2)
+	sqrt_x = reduction[0]
+	
+	for step in reduction[1]:
+		if step:
+			sqrt_x *= sqrt_2
+		else:
+			sqrt_x /= sqrt_2
+	
+	return sqrt_x
 
 if __name__ == "__main__":
 	tests = [4, 5, 16, 23, 40, 2, 167, 125348]
@@ -94,3 +109,6 @@ if __name__ == "__main__":
 	print("==========NEWTON'S==========")
 	for test_case in tests:
 		print("sqrt(" + str(test_case) + ") = " + str(newtons_method(test_case)))
+	print("==========OPTIMIZED==========")
+	for test_case in tests:
+		print("sqrt(" + str(test_case) + ") = " + str(optimized_newtons(test_case)))
