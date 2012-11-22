@@ -54,16 +54,21 @@ def generate_random_text(text_triples, text_limit):
 	while i < text_limit:
 		if last_word == "":
 			triples_count = len(text_triples)
-			random_index = random.randint(0, triples_count - 1)
+			random_index = get_starting_index(text_triples)
 			random_triple = text_triples[random_index]
-			last_word = random_triple[1]
-			random_text = " ".join(random_triple)
+			last_word = random_triple[2]
+			random_text = " ".join(random_triple[0:2])
 		else:
-			continuing_triple = list(filter(lambda triple: triple[1] == last_word, text_triples))
-			triples_count = len(continuing_triple)
-			random_triple = text_triples[random.randint(0, triples_count)]
+			continuing_triples = list(filter(lambda triple: triple[0] == last_word, text_triples))
+			triples_count = len(continuing_triples)
+			
+			if triples_count == 0:
+				break
+			
+			random_triple = continuing_triples[random.randint(0, triples_count - 1)]
 			for_joining = random_text.split(" ")
-			for_joining.extend(random_triple)
+			for_joining.extend(random_triple[0:2])
+			last_word = random_triple[2]
 			random_text = " ".join(for_joining)
 		
 		i += 1
@@ -72,11 +77,13 @@ def generate_random_text(text_triples, text_limit):
 
 def get_starting_index(triples):
 	"""
-	Gets a random triple with the additional constraint that the
-	first element of that triple starts with a capital letter.
+	Gets a random index within the given triples list with the additional constraint
+	that the first element of that triple starts with a capital letter.
 	"""
-	#all_caps = list(filter(lambda
-	pass
+	caps_starters = list(filter(lambda triple: triple[0][0].isupper(), triples))
+	starter_count = len(caps_starters)
+	random_triple = caps_starters[random.randint(0, starter_count - 1)]
+	return triples.index(random_triple)
 
 class FunctionsTest(unittest.TestCase):
 	
@@ -89,6 +96,13 @@ class FunctionsTest(unittest.TestCase):
 		
 		shorter_sentence = save_triples("the quick")
 		self.assertEqual(shorter_sentence, [])
+	
+	def test_get_starting_index(self):
+		triple_list = [('Someone', 'you', 'me'), ('me', 'Someone', 'no'), ('me', 'no', 'Evil'), ('no', 'caps', 'really'), ('Menu', 'source', 'engine')]
+		test_metric = lambda x: x == 0 or x == 4
+
+		for i in range(100):
+			self.assertTrue(test_metric(get_starting_index(triple_list)))
 
 if __name__ == "__main__":
 	#unittest.main()
