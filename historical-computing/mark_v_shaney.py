@@ -30,14 +30,14 @@ def save_triples(line):
 
 def train_on_text(text_filename):
 	"""
-	For now, let consider each line separately. And consider
+	For now, let's consider each line separately. And consider
 	paragraphs and stuff.
 	"""
 	# TODO Use a more efficient data structure to store the table.
 	triple_table = []
 	
 	with open(text_filename) as training_text:
-		for line in text_filename:
+		for line in training_text:
 			triple_table.extend(save_triples(line))
 	
 	return triple_table
@@ -54,18 +54,29 @@ def generate_random_text(text_triples, text_limit):
 	while i < text_limit:
 		if last_word == "":
 			triples_count = len(text_triples)
-			random_triple = text_triples[random.randint(0, triples_count)]
+			random_index = random.randint(0, triples_count - 1)
+			random_triple = text_triples[random_index]
 			last_word = random_triple[1]
 			random_text = " ".join(random_triple)
 		else:
 			continuing_triple = list(filter(lambda triple: triple[1] == last_word, text_triples))
-			triples_count = len(continuing_triples)
+			triples_count = len(continuing_triple)
 			random_triple = text_triples[random.randint(0, triples_count)]
-			random_text = " ".join(random_text.split(" ").extend(random_triple))
+			for_joining = random_text.split(" ")
+			for_joining.extend(random_triple)
+			random_text = " ".join(for_joining)
 		
 		i += 1
 	
 	return random_text
+
+def get_starting_index(triples):
+	"""
+	Gets a random triple with the additional constraint that the
+	first element of that triple starts with a capital letter.
+	"""
+	#all_caps = list(filter(lambda
+	pass
 
 class FunctionsTest(unittest.TestCase):
 	
@@ -80,4 +91,7 @@ class FunctionsTest(unittest.TestCase):
 		self.assertEqual(shorter_sentence, [])
 
 if __name__ == "__main__":
-	unittest.main()
+	#unittest.main()
+	triples = train_on_text("pp_problem_corpus.txt")
+	random_problem = generate_random_text(triples, 100)
+	print(random_problem)
