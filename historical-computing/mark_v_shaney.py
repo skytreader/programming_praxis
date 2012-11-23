@@ -6,7 +6,6 @@ import sys
 
 """
 http://programmingpraxis.com/2009/02/27/mark-v-shaney/
-UNFINISHED
 """
 
 def save_triples(line):
