@@ -2,6 +2,7 @@
 
 import unittest
 import random
+import sys
 
 """
 http://programmingpraxis.com/2009/02/27/mark-v-shaney/
@@ -106,6 +107,9 @@ class FunctionsTest(unittest.TestCase):
 
 if __name__ == "__main__":
 	#unittest.main()
-	triples = train_on_text("pp_problem_corpus.txt")
-	random_problem = generate_random_text(triples, 100)
+	if len(sys.argv) != 3:
+		print("Expecting 2 arguments: the filename of the training text and the number of iterations.")
+		sys.exit()
+	triples = train_on_text(sys.argv[1])
+	random_problem = generate_random_text(triples, int(sys.argv[2]))
 	print(random_problem)

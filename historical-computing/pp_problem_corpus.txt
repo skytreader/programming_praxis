@@ -29,3 +29,57 @@ The evaluator consists of a set of mutually recursive functions that each recogn
 As an example, consider the input string (3+4)*5. The driver passes the input to a function that recognizes expressions. Since the metastatement for expressions expects a term, that function immediately passes the input to a function that recognizes terms. Then, since the metastatement for terms expects a factor, that function immediately passes the input to a function that recognizes factors. That functions recognizes the opening parenthesis and calls the function that recognizes expressions to evaluate what is inside the parenthesis. Again, the expression metastatement looks for a term, and the term metastatement looks for a factor, and the factor metastatement looks for a number, which it finds, so it returns 3 to the term metatstatment, which returns 3 to the expression metastatement. Then the expression metastatement recognizes the + sign and goes next to the 4. The expression metastatement calls the term metastatement, which calls the factor metastatement, which identifies the 4 and passes it back to the term metastatement, which passes it back to the expressions metastatement, which adds it to 3 giving a result of 7. Now the expression metastatement is satisfied because the next input character is not a +, - or expression, so it returns the 7 to the expression that was called within the parentheses of the factor metastatement. The next character is a closing parenthesis, so the factor metastatement is complete, and passes back the 7 to the term metastatement. Now the next character is *, which is recognized by the term metastatement, which passes the remainder of the input string, the 5 character, to the factor metastatement. Now the factor metastatement recognizes the number 5 and returns it to the term metastatement, which multiplies it by 7 producing a result of 35. The result is passed back to the expression metastatement, which recognizes that the expression is complete, so it passes the result 35 back to the driver function, which outputs the result. Whew! Aren’t you glad you have a computer to do all of that work for you?
 
 Your task is to write a function that evaluates an infix arithmetic expression. When you are finished, you are welcome to read or run a suggested solution, or to post your own solution or discuss the exercise in the comments below.
+
+Baker, Cooper, Fletcher, Miller and Smith live on different floors of an apartment house that contains only five floors. Baker does not live on the top floor. Cooper does not live on the bottom floor. Fletcher does not live on either the top or the bottom floor. Miller lives on a higher floor than does Cooper. Smith does not live on a floor adjacent to Fletcher’s. Fletcher does not live on a floor adjacent to Cooper’s. Where does everyone live?
+
+This famous puzzle was first published by Life magazine on December 17, 1962. It has been variously attributed to both Albert Einstein and Lewis Carroll, but the true author is not known. There are several versions; this is the original from Life:
+
+1 There are five houses.
+
+2 The Englishman lives in the red house.
+
+3 The Spaniard owns the dog.
+
+4 Coffee is drunk in the green house.
+
+5 The Ukrainian drinks tea.
+
+6 The green house is immediately to the right of the ivory house.
+
+7 The Old Gold smoker owns snails.
+
+8 Kools are smoked in the yellow house.
+
+9 Milk is drunk in the middle house.
+
+10 The Norwegian lives in the first house.
+
+11 The man who smokes Chesterfields lives in the house next to the man with the fox.
+
+12 Kools are smoked in the house next to the house where the horse is kept.
+
+13 The Lucky Strike smoker drinks orange juice.
+
+14 The Japanese smokes Parliaments.
+
+15 The Norwegian lives next to the blue house.
+
+In the interest of clarity, it must be added that each of the five houses is painted a different color, and their inhabitants are of different national extractions, own different pets, drink different beverages and smoke different brands of American cigarettes.
+
+Your task is to write a program to solve the puzzle and determine: Who drinks water? Who owns the zebra? When you are finished, you are welcome to read or run a suggested solution, or to post your own solution or discuss the exercise in the comments below.
+
+John McCarthy, who discovered Lisp, attributes this puzzle to Hans Freudenthal:
+
+We pick two numbers a and b, so that 99 ≥ a ≥ b ≥ 2. We tell Mr. P. the product a × b and Mr. S. the sum a + b. Then Mr. S. and Mr. P. engage in the following dialog:
+
+Mr. P.: I don’t know the numbers.
+
+Mr. S.: I knew you didn’t know. I don’t know either.
+
+Mr. P.: Now I know the numbers.
+
+Mr. S.: Now I know them too.
+
+Find the numbers a and b.
+
+Your task is to find the two numbers. When you are finished, you are welcome to read or run a suggested solution, or to post your solution or discuss the exercise in the comments below.
