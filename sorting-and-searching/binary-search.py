@@ -5,7 +5,6 @@ import unittest
 
 """
 http://programmingpraxis.com/2009/03/23/binary-search/
-UNFINISHED
 
 (Might also use this in other problems.)
 """
