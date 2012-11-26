@@ -14,6 +14,8 @@ def binary_search(sorted_space, query):
 	"""
 	Returns the index of the query in the sorted space if it
 	is present in the list. Otherwise, returns a negative value.
+
+	We assume that the list is sorted in ascending order.
 	"""
 	low_limit = 0
 	hi_limit = len(sorted_space)
@@ -26,9 +28,9 @@ def binary_search(sorted_space, query):
 		if sorted_space[cur_node_index] == query:
 			return cur_node_index
 		elif sorted_space[cur_node_index] < query:
-			hi_limit = cur_node_index
-		else:
 			low_limit = cur_node_index
+		else:
+			hi_limit = cur_node_index
 
 		cur_node_index = math.floor((low_limit + hi_limit) / 2)
 	
