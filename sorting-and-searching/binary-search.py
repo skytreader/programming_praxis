@@ -56,5 +56,13 @@ class FunctionsTest(unittest.TestCase):
 		negative_even = binary_search(pi_list, 42)
 		self.assertEqual(negative_even, -1)
 
+		odd_list = pi_list[0:len(pi_list) - 1]
+		positive_odd = binary_search(odd_list, 5)
+		self.assertTrue(positive_odd > 0)
+		self.assertEqual(odd_list[positive_odd], 5)
+
+		negative_odd = binary_search(odd_list, 34)
+		self.assertEqual(negative_odd, -1)
+
 if __name__ == "__main__":
 	unittest.main()
