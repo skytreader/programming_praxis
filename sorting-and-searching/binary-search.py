@@ -26,9 +26,9 @@ def binary_search(sorted_space, query):
 		if sorted_space[cur_node_index] == query:
 			return cur_node_index
 		elif sorted_space[cur_node_index] < query:
-			hi_limit = cur_node_index
-		else:
 			low_limit = cur_node_index
+		else:
+			hi_limit = cur_node_index
 
 		cur_node_index = math.floor((low_limit + hi_limit) / 2)
 	
@@ -47,9 +47,10 @@ class FunctionsTest(unittest.TestCase):
 		pi_list = [1,4,1,5,9,9,6,5,3,5,8,9,7,9,3,2,3,5,4,6,2,6,4,3,3,8,3,2,7,9,5,0,2,8,8,4,1,9,7,1,6,9]
 		pi_list.sort()
 		
-		positive_even = binary_search(pi_list, 8)
-		self.assertTrue(positive_even > 0)
-		self.assertEqual(pi_list[positive_even], 8)
+		for i in range(10):
+			positive_even = binary_search(pi_list, i)
+			self.assertTrue(positive_even >= 0)
+			self.assertEqual(pi_list[positive_even], i)
 		
 		negative_even = binary_search(pi_list, 42)
 		self.assertEqual(negative_even, -1)
