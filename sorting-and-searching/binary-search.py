@@ -5,7 +5,6 @@ import unittest
 
 """
 http://programmingpraxis.com/2009/03/23/binary-search/
-UNFINISHED
 
 (Might also use this in other problems.)
 """
@@ -14,6 +13,8 @@ def binary_search(sorted_space, query):
 	"""
 	Returns the index of the query in the sorted space if it
 	is present in the list. Otherwise, returns a negative value.
+
+	We assume that the list is sorted in ascending order.
 	"""
 	low_limit = 0
 	hi_limit = len(sorted_space)
@@ -54,6 +55,14 @@ class FunctionsTest(unittest.TestCase):
 		
 		negative_even = binary_search(pi_list, 42)
 		self.assertEqual(negative_even, -1)
+
+		odd_list = pi_list[0:len(pi_list) - 1]
+		positive_odd = binary_search(odd_list, 5)
+		self.assertTrue(positive_odd > 0)
+		self.assertEqual(odd_list[positive_odd], 5)
+
+		negative_odd = binary_search(odd_list, 34)
+		self.assertEqual(negative_odd, -1)
 
 if __name__ == "__main__":
 	unittest.main()
