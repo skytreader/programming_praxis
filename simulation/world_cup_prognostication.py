@@ -3,8 +3,6 @@
 import math
 import random
 
-from ../dry/dataset_reader import DataSetReader
-
 """
 http://programmingpraxis.com/2010/06/29/world-cup-prognostication/
 UNFINISHED
@@ -18,7 +16,7 @@ class Team(object):
 	
 	def __init__(self, country_code, elo_rating):
 		self.country_code = country_code
-		self.elo_rating = self.elo_rating
+		self.elo_rating = elo_rating
 
 def compute_new_elo(team_A, team_B, game_weight, goal_difference, win_loss):
 	"""
@@ -67,24 +65,26 @@ def simulate_block(block):
 	Note that a whole tournament may be represented as one
 	big block.
 	"""
-	team_count = len(teams)
-	this_round = teams
+	team_count = len(block)
+	this_round = block
 
 	while len(this_round) != 1:
-		skip_indices = range(len(this_round))
+		participants_remaining = len(this_round)
+		skip_indices = range(participants_remaining)
 		next_round = []
 		for i in skip_indices:
-			if i + 1 < team_count:
-				pass
-			else:
+			if i + 1 < participants_remaining:
 				next_round.append(simulate_match(this_round[i], this_round[i + 1]))
+			else:
+				pass
 
 		this_round = next_round
 	
 	return this_round[0]
 
 if __name__ == "__main__":
-	# Create the competing teams.
+	win_times = {"BRA":0, "ESP":0, "NED":0, "ARG":0, "ENG":0, "GER":0, "URU":0, "CHI":0, "POR":0, "MEX":0, "USA":0, "PAR":0, "KOR":0, "JPN":0, "GHA":0, "SVK":0}
+
 	brazil = Team("BRA", 2082)
 	spain = Team("ESP", 2061)
 	netherlands = Team("NED", 2045)
@@ -103,5 +103,29 @@ if __name__ == "__main__":
 	slovakia = Team("SVK", 1654)
 
 	tournament_block = [uruguay, korea, united_states, ghana, netherlands, slovakia, brazil, chile, argentina, mexico, germany, england, paraguay, japan, spain, portugal]
-	winner = simulate_block(tournament_block)
-	print("The winner is " + winner.country_code)
+
+	for i in range(1000000):
+		# Create the competing teams.
+		winner = simulate_block(tournament_block)
+		win_times[winner.country_code] += 1
+		print("Cup " + str(i + 1) + " winner is " + winner.country_code)
+
+		# Reset ELOs
+		brazil.elo_rating = 2082
+		spain.elo_rating = 2061
+		netherlands.elo_rating = 2045
+		argentina.elo_rating = 1966
+		england.elo_rating = 1945
+		germany.elo_rating = 1930
+		uruguay.elo_rating = 1890
+		chile.elo_rating = 1883
+		portugal.elo_rating = 1874
+		mexico.elo_rating = 1873
+		united_states.elo_rating = 1785
+		paraguay.elo_rating = 1771
+		korea.elo_rating = 1746
+		japan.elo_rating = 1744
+		ghana.elo_rating = 1711
+		slovakia.elo_rating = 1654
+	
+	print(str(win_time))
