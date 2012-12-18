@@ -128,4 +128,4 @@ if __name__ == "__main__":
 		ghana.elo_rating = 1711
 		slovakia.elo_rating = 1654
 	
-	print(str(win_time))
+	print(str(win_times))
