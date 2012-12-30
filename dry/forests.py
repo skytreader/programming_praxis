@@ -36,12 +36,25 @@ class Forest(object):
         """
         pass
 
+class NonexistentNodeException(Exception):
+    
+    def __init__(self, value):
+        self.value = value
+    
+    def __str__(self):
+        return repr(self.value)
+
 class ListForest(Forest):
     """
     Implements a forest as a list-of-lists. Don't use this if you need
     to store multiple shallow copies of data in a single forest.
 
     Pass actual objects for nodes --- we'll search for them!
+
+    Family structure:
+    The first node in a family is the parent of that family. The succeding
+    nodes are the indices of the nodes which are direct descendants of the
+    family
     """
 
     def __init__(self):
@@ -62,6 +75,9 @@ class ListForest(Forest):
         Links nodes parent and child. If there are several shallow copies
         of either parent or child scattered in in the forest, only the first
         copy inserted is used.
+
+        Note that both parent and child must be in the set of nodes first before
+        they can be linked.
         
         TODO Test with deep and shallow copies.
         """
@@ -69,21 +85,27 @@ class ListForest(Forest):
         parent_index = nodelist.index(parent)
         child_index = nodelist.index(child)
 
-        self.__nodes[parent_index].append(child)
+        self.__nodes[parent_index].append(child_index)
 
     def get_children(self, parent):
+        """
+        Returns all the children of parent as a list of objects.
+        """
         all_nodes = self.get_nodes()
         parent_index = all_nodes.index(parent)
         parent_family = self.__nodes[parent_index]
+        children = parent_family[1:len(parent_family)]
         
-        return parent_family[1:len(parent_family)]
+        return [self.__nodes[child_index][0] for child_index in children]
 
     def get_parents(self, child):
         parents = []
+        nodes = self.get_nodes()
+        child_index = nodes.index(child)
 
         for family in self.__nodes:
-            if child in family and family.index(child):
-                parents.append(child)
+            if child_index in family:
+                parents.append(family[0])
 
         return parents
 
@@ -98,9 +120,6 @@ class Person(object):
 
     def __deepcopy__(self, memo):
         return Person(self.name, self.age)
-
-    def __eq__(self, other_person):
-        return self.name == other_person.name and self.age == other_person.age
 
 class ListForestTests(unittest.TestCase):
     """
@@ -160,7 +179,7 @@ class ListForestTests(unittest.TestCase):
         self.assertEqual(len(galadriel_mother), 1)
 
         earwen_elfchildren = [self.finrod, self.angrod, self.edhellos, self.aegnor, self.galadriel]
-        earwen_treechildren = forest.get_children()
+        earwen_treechildren = forest.get_children(self.earwen)
 
         self.assertEqual(len(earwen_elfchildren), len(earwen_treechildren))
 
