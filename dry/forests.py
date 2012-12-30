@@ -51,6 +51,10 @@ class ListForest(Forest):
         self.__nodes.append([node_contents])
 
     def get_nodes(self):
+        """
+        Returns all the nodes inserted so far in this tree. This returns
+        the nodes in the order they were inserted.
+        """
         return list(map(lambda x: x[0], self.__nodes))
 
     def link_child(self, parent, child):
@@ -67,6 +71,22 @@ class ListForest(Forest):
 
         self.__nodes[parent_index].append(child)
 
+    def get_children(self, parent):
+        all_nodes = self.get_nodes()
+        parent_index = all_nodes.index(parent)
+        parent_family = self.__nodes[parent_index]
+        
+        return parent_family[1:len(parent_family)]
+
+    def get_parents(self, child):
+        parents = []
+
+        for family in self.__nodes:
+            if child in family and family.index(child):
+                parents.append(child)
+
+        return parents
+
 class Person(object):
     """
     A dummy object for testing shallow and deep copies.
@@ -78,6 +98,9 @@ class Person(object):
 
     def __deepcopy__(self, memo):
         return Person(self.name, self.age)
+
+    def __eq__(self, other_person):
+        return self.name == other_person.name and self.age == other_person.age
 
 class ListForestTests(unittest.TestCase):
     """
@@ -132,8 +155,17 @@ class ListForestTests(unittest.TestCase):
         The standard test always assumes that an elf-child is linked
         to its elf-mother but not necessarily to its elf-father.
         """
-        galadriel_mother = forest.get_parent(self.galadriel)
-        self.assertEqual(galadriel_mother, self.earwen)
+        galadriel_mother = forest.get_parents(self.galadriel)
+        self.assertEqual(galadriel_mother[0], self.earwen)
+        self.assertEqual(len(galadriel_mother), 1)
+
+        earwen_elfchildren = [self.finrod, self.angrod, self.edhellos, self.aegnor, self.galadriel]
+        earwen_treechildren = forest.get_children()
+
+        self.assertEqual(len(earwen_elfchildren), len(earwen_treechildren))
+
+        for elfchild in earwen_elfchildren:
+            self.assertTrue(elfchild in earwen_treechildren)
 
     def test_listforest_standard(self):
         listforest = ListForest()
@@ -154,6 +186,8 @@ class ListForestTests(unittest.TestCase):
         
         listforest.link_child(self.orodreth_wife, self.gil_galad)
         listforest.link_child(self.orodreth_wife, self.findulias)
+
+        self.standard_tests(listforest)
 
 if __name__ == "__main__":
     unittest.main()
