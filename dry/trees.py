@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import copy
 import unittest
 
 """
@@ -58,7 +59,20 @@ class ListTree(Tree):
 
         self.__nodes[parent_index].append(child)
 
+class Person(object):
+    """
+    A dummy object for testing shallow and deep copies.
+    """
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def __deepcopy__(self, memo):
+        return Person(self.name, self.age)
+
 class ListTreeTests(unittest.TestCase):
     
     def setup(self):
-        pass
+        self.finn = Person("Finn", 10)
+        self.finn_shallow = self.finn
