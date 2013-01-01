@@ -36,6 +36,9 @@ class Forest(object):
         """
         pass
 
+    def link_child(self, parent, child):
+        pass
+
 class NonexistentNodeException(Exception):
     
     def __init__(self, value):
@@ -109,6 +112,61 @@ class ListForest(Forest):
 
         return parents
 
+# More-space-economical representations
+
+class PreorderSeqForest(Forest):
+    """
+    Uses a preorder-sequential representation to represent the
+    tree. Construction might be more expensive compared to
+    ListForest but the space used should be less.
+    """
+    
+    def __init__(self):
+        """
+        rtags and ltags are boolean arrays.
+        """
+        self.__rtags = []
+        self.__nodedata = []
+        self.__ltags = []
+
+    def add_node(self, node_data):
+        """
+        The node data is appended as a sole node.
+        """
+        self.__rtags.append(True)
+        self.__nodedata.append(data)
+        self.__ltags.append(True)
+    
+    def get_tree(self, root):
+        """
+        Get the (sub-)tree rooted at root.
+
+        Returns a list of nodes included in the subtree rooted at
+        the specified node (root). The list should be in preorder
+        sequential order and must include the root.
+
+        But, what if the root is the last child (and it also has
+        child nodes)?
+        """
+        root_index = self.__nodedata.index(root)
+        last_index = root_index
+        count = 0 if self.__rtags[root_index] and self.__ltags[root_index] else 1
+        last_index += 1
+        limit = len(self.__nodedata)
+
+        while root_index < limit and count:
+            if self.__rtags[root_index]:
+                count += 1
+
+            if self.__ltags[root_index]:
+                count -= 1
+
+        return self.__nodedata[root_index:last_index + 1]
+
+    def get_children(self, parent):
+        subtree = self.get_tree(parent)
+        parent_index = subtree[0]
+
 class Person(object):
     """
     A dummy object for testing shallow and deep copies.
@@ -156,9 +214,9 @@ class ListForestTests(unittest.TestCase):
         And, when in doubt, always check their ages. :D
         """
         self.earwen = Person("Earwen", 200)
-        self.finrod = Person("finrod", 150)
+        self.finrod = Person("Finrod", 150)
         self.angrod = Person("Angrod", 150)
-        self.edhellos = Person("edhellos", 145)
+        self.edhellos = Person("Edhellos", 145)
         self.aegnor = Person("Aegnor", 150)
         self.orodreth = Person("Orodreth", 100)
         self.orodreth_wife = Person("Orodreth's Wife", 95)
@@ -205,8 +263,16 @@ class ListForestTests(unittest.TestCase):
         
         listforest.link_child(self.orodreth_wife, self.gil_galad)
         listforest.link_child(self.orodreth_wife, self.findulias)
-
+        
+        # Standard testing
         self.standard_tests(listforest)
+
+        # Test that the order of nodes returned by get_nodes is insertion order
+        nodes = listforest.get_nodes()
+        limit = len(nodes)
+
+        for i in range(limit):
+            self.assertEqual(self.all_nodes[i], nodes[i])
 
 if __name__ == "__main__":
     unittest.main()

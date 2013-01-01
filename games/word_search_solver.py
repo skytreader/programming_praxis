@@ -23,7 +23,14 @@ def get_neighbors(row, col):
 	Returns a list of tuples, representing the neighbors of the given
 	cell, as described by row and col.
 	"""
-	pass
+	if row == 0 and col == 0:
+        return [(0, 1), (1, 0), (1, 1)]
+    elif row == 0:
+        return [(row, col - 1), (row, col + 1), (row + 1, col - 1), (row + 1, col), (row + 1, col + 1)]
+    elif col == 0:
+        return [(row - 1, col), (row + 1, col), (row - 1, col + 1), (row, col + 1), (row + 1, col + 1)]
+    else:
+        return [(row - 1, col - 1), (row - 1, col), (row - 1, col + 1), (row, col - 1), (row, col + 1), (row + 1, col - 1), (row + 1, col), (row + 1, col + 1)]
 
 def search(word_set, letter_block):
 	"""

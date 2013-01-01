@@ -4,7 +4,6 @@ import sys
 
 """
 http://programmingpraxis.com/2009/04/10/anagrams/
-UNFINISHED
 """
 
 def is_anagrams(word1, word2):
