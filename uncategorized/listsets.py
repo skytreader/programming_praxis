@@ -33,16 +33,16 @@ def union(l1, l2):
     return union
 
 def difference(l1, l2):
-    larger_len = max(len(l1), len(l2))
-    larger_list = l1 if len(l1) == larger_len else l2
-    smaller_list = l2 if larger_list == l1 else l1
-    difference = []
+    """
+    Remove everything in l2 from l1.
+    """
+    diffed = [item for item in l1]
 
-    for item in larger_list:
-        if item not in smaller_list:
-            difference.append(item)
+    for item in l2:
+        if item in l1:
+            diffed.remove(item)
 
-    return difference
+    return diffed
 
 class FunctionsTest(unittest.TestCase):
     
@@ -52,6 +52,8 @@ class FunctionsTest(unittest.TestCase):
         self.lb = [7, 19, 4, 11, 13, 2, 15]
         self.intersection = set([4, 7, 13])
         self.union = set([4, 7, 12, 6, 17, 5, 13, 19, 11, 2, 15])
+        self.ab_difference = set([12, 6, 17, 5])
+        self.ba_difference = set([19, 11, 2, 15])
 
         self.small_list = [1, 2, 3]
         self.large_list = [1, 2, 3, 4, 5]
@@ -68,6 +70,12 @@ class FunctionsTest(unittest.TestCase):
     def test_union(self):
         self.assertEqual(set(union(self.la, self.lb)), self.union)
         self.assertEqual(set(union(self.small_list, self.large_list)), self.sl_union)
+    
+    def test_difference(self):
+        self.assertEqual(set(difference(self.la, self.lb)), self.ab_difference)
+        self.assertEqual(set(difference(self.lb, self.la)), self.ba_difference)
+        self.assertEqual(set(difference(self.small_list, self.large_list)), set())
+        self.assertEqual(set(difference(self.large_list, self.small_list)), set([4, 5]))
 
 if __name__ == "__main__":
     unittest.main()
