@@ -68,7 +68,7 @@ def get_word(cell_seq, letter_block):
 
 def search(word_set, letter_block):
     """
-    Searches for all the words in word_set in letter_block. Returns
+    Depth-First-Searches for all the words in word_set in letter_block. Returns
     a list of strings specifying the results of the search.
     
     word_set and letter_block is a list of strings. We assume that
@@ -94,13 +94,17 @@ def search(word_set, letter_block):
     
     for row in range(block_height):
         for col in range(block_width):
-            prefix = letter_block[row][col]
-            
-            prefix_matches = search_startswith(prefix, word_set)
-            
-            while prefix_matches:
-                neighbors = get_neighbors(row, col)
+            neighbors = get_neighbors(row, col, block_height, block_width)
+            match_prefix = ""
+
+            while neighbors:
+                current_cell = neighbors.pop()
+                match_prefix = letter_block[current_cell[0]][current_cell[1]]
+                prefix_matches = search_startswith(match_prefix)
                 
-                for letter_cell in neighbors:
-                    prefix += letter_block[letter_cell[0]][letter_cell[1]]
-                    prefix_matches = search_startswith(prefix, word_set)
+                if prefix_matches:
+                    if len(current_cell) >= 3:
+                        neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width, current_cell[2]))
+                    else:
+                        # Only happens once
+                        neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width))
