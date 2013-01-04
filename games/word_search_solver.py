@@ -99,7 +99,7 @@ def search(word_set, letter_block):
     
     for row in range(block_height):
         for col in range(block_width):
-            print("Origin at " + str(row) + " " + str(col))
+            # print("Origin at " + str(row) + " " + str(col))
             neighbors = get_neighbors(row, col, block_height, block_width, ALL_DIRECTIONS)
             original_prefix = letter_block[row][col]
             match_prefix = letter_block[row][col]
@@ -107,18 +107,18 @@ def search(word_set, letter_block):
             # DFS on all neighbors
             while neighbors:
                 current_cell = neighbors.pop()
-                print("Here are the neighbors " + str(neighbors))
-                print("Checking cell " + str(current_cell))
+                # print("Here are the neighbors " + str(neighbors))
+                # print("Checking cell " + str(current_cell))
                 # PROBLEM
                 match_prefix += letter_block[current_cell[0]][current_cell[1]]
-                print("Current prefix " + match_prefix)
+                # print("Current prefix " + match_prefix)
                 prefix_matches = search_startswith(match_prefix, word_set)
-                print("Prefix matches " + str(prefix_matches))
+                # print("Prefix matches " + str(prefix_matches))
                 
                 if prefix_matches:
                     # TEST CASE: neighbors does not get extended (dead-end, possibly).
                     # By next iteration, we must be considering the next neighbor of our origin cell.
-                    print("Extend in same direction: " + str(current_cell[2]))
+                    # print("Extend in same direction: " + str(current_cell[2]))
                     neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width, [current_cell[2]]))
                 else:
                     # Return this to original prefix since at next turn, we must be considering the next
@@ -128,7 +128,7 @@ def search(word_set, letter_block):
                 if match_prefix in word_set:
                     found_words[match_prefix] = ((row, col), current_cell[0:2])
 
-    print(str(found_words))
+    # print(str(found_words))
     return found_words
 
 class FunctionTest(unittest.TestCase):
@@ -139,7 +139,7 @@ class FunctionTest(unittest.TestCase):
         self.assertEqual(len(word_grid), 10)
         
         for row in word_grid:
-            print("Checking row " + str(row))
+            # print("Checking row " + str(row))
             self.assertEqual(len(row), 10)
 
         expected_output = dict()
