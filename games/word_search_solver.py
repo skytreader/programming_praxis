@@ -4,10 +4,11 @@ import unittest
 
 """
 http://programmingpraxis.com/2009/05/26/word-search-solver/
-UNFINISHED
+
+This version uses direction fields.
 """
 
-# TAG
+# Direction field values.
 # TODO Check if we can intergrate this pattern for PyGame Objects
 UP_LEFT = (-1, -1)
 UP = (-1, 0)
@@ -74,15 +75,6 @@ def search(word_set, letter_block):
     word_set and letter_block is a list of strings. We assume that all the strings
     in letter_block have the same length.
     
-    Let's try two approaches:
-      (1) Tag the neighbors of a prefix match cell on what direction are
-          they headed (up left, up, up right, ...,etc.).
-      (2) Use a tree instead of a stack in storing adjacent cells. The 
-          parent-child nodes of the tree will have a "comes from"
-          relationship. The tree must allow us access to a node's parent.
-          This way, we can derive from what direction do we proceed
-          (same as the direction a node's parent took).
-
     Returns a dictionary of all the words in word_set found and a pair of tuples
     indicating the start indices of the word in the grid and the end indices
     (direction can then be inferred). Note that if a word in word_set occurs
