@@ -35,17 +35,16 @@ def search_startswith(prefix, word_set):
 
 def step_in_directions(row, col, rowlimit, collimit, directions):
     steps = []
-
     for step_dir in directions:
         drow = row + step_dir[0]
         dcol = col + step_dir[1]
 
         if (0 <= drow and drow < rowlimit) and (0 <= dcol and dcol < collimit):
-            steps.append((drow, dcol))
+            steps.append((drow, dcol, step_dir))
 
     return steps
 
-def get_neighbors(row, col, rowlimit, collimit, direction = None):
+def get_neighbors(row, col, rowlimit, collimit, direction):
     """
     The return of this function varies from whether direction is set or
     not. If direction is set, we return the neighbor adjacent to
@@ -56,7 +55,7 @@ def get_neighbors(row, col, rowlimit, collimit, direction = None):
     the specified cell.
     """
     if direction:
-        return step_in_directions(row, col, rowlimit, collimit, [direction])
+        return step_in_directions(row, col, rowlimit, collimit, direction)
     else:
         return step_in_directions(row, col, rowlimit, collimit, ALL_DIRECTIONS)
 
@@ -100,34 +99,37 @@ def search(word_set, letter_block):
     
     for row in range(block_height):
         for col in range(block_width):
-            neighbors = get_neighbors(row, col, block_height, block_width)
+            print("Origin at " + str(row) + " " + str(col))
+            neighbors = get_neighbors(row, col, block_height, block_width, ALL_DIRECTIONS)
             original_prefix = letter_block[row][col]
-            match_prefix = ""
+            match_prefix = letter_block[row][col]
             
             # DFS on all neighbors
             while neighbors:
                 current_cell = neighbors.pop()
+                print("Here are the neighbors " + str(neighbors))
+                print("Checking cell " + str(current_cell))
                 # PROBLEM
                 match_prefix += letter_block[current_cell[0]][current_cell[1]]
+                print("Current prefix " + match_prefix)
                 prefix_matches = search_startswith(match_prefix, word_set)
+                print("Prefix matches " + str(prefix_matches))
                 
                 if prefix_matches:
                     # TEST CASE: neighbors does not get extended (dead-end, possibly).
                     # By next iteration, we must be considering the next neighbor of our origin cell.
-                    if len(current_cell) >= 3:
-                        neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width, current_cell[2]))
-                    else:
-                        # Only happens once
-                        neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width))
+                    print("Extend in same direction: " + str(current_cell[2]))
+                    neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width, [current_cell[2]]))
                 else:
                     # Return this to original prefix since at next turn, we must be considering the next
                     # neighbor of our origin cell.
                     match_prefix = original_prefix
 
                 if match_prefix in word_set:
-                    found_words[match_prefix] = ((row, col), current_cell)
+                    found_words[match_prefix] = ((row, col), current_cell[0:2])
 
-            return found_words
+    print(str(found_words))
+    return found_words
 
 class FunctionTest(unittest.TestCase):
     
