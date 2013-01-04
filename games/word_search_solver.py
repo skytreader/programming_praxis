@@ -69,17 +69,11 @@ def get_word(cell_seq, letter_block):
 
 def search(word_set, letter_block):
     """
-    Depth-First-Searches for all the words in word_set in letter_block. Returns
-    a list of strings specifying the results of the search.
+    Depth-First-Searches for all the words in word_set in letter_block.
     
     word_set and letter_block is a list of strings. We assume that all the strings
     in letter_block have the same length.
     
-    Test cases:
-     - w_n in word_set is a prefix of w_m in word_set.
-     - intersecting starts: the initial letter of one word in word_set is found in
-       the same cell as the initial letter of another word in word_set.
-
     Let's try two approaches:
       (1) Tag the neighbors of a prefix match cell on what direction are
           they headed (up left, up, up right, ...,etc.).
@@ -91,7 +85,9 @@ def search(word_set, letter_block):
 
     Returns a dictionary of all the words in word_set found and a pair of tuples
     indicating the start indices of the word in the grid and the end indices
-    (direction can then be inferred).
+    (direction can then be inferred). Note that if a word in word_set occurs
+    twice (or more) in letter_block, the answer will be the last such instance.
+    But then, I'm still too lazy to verify how instances are ordered here.
     """
     block_height = len(letter_block)
     block_width = len(letter_block[0])
@@ -150,6 +146,10 @@ class FunctionTest(unittest.TestCase):
         expected_output["free"] = ((4, 0), (4, 3))
         expected_output["mining"] = ((9, 2), (4, 7))
 
+        self.assertEqual(expected_output, search(word_list, word_grid))
+
+        word_list.append("gen")
+        expected_output["gen"] = ((0, 0), (2, 2))
         self.assertEqual(expected_output, search(word_list, word_grid))
 
 if __name__ == "__main__":
