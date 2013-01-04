@@ -1,5 +1,7 @@
 #! usr/bin/env python
 
+import unittest
+
 """
 http://programmingpraxis.com/2009/05/26/word-search-solver/
 UNFINISHED
@@ -35,8 +37,8 @@ def step_in_directions(row, col, rowlimit, collimit, directions):
     steps = []
 
     for step_dir in directions:
-        drow = row + direction[0]
-        dcol = col + direction[1]
+        drow = row + step_dir[0]
+        dcol = col + step_dir[1]
 
         if (0 <= drow and drow < rowlimit) and (0 <= dcol and dcol < collimit):
             steps.append((drow, dcol))
@@ -71,14 +73,13 @@ def search(word_set, letter_block):
     Depth-First-Searches for all the words in word_set in letter_block. Returns
     a list of strings specifying the results of the search.
     
-    word_set and letter_block is a list of strings. We assume that
-    all the strings in letter_block have the same length.
+    word_set and letter_block is a list of strings. We assume that all the strings
+    in letter_block have the same length.
     
     Test cases:
      - w_n in word_set is a prefix of w_m in word_set.
-     - intersecting starts: the initial letter of one word in word_set
-       is found in the same cell as the initial letter of another word
-       in word_set.
+     - intersecting starts: the initial letter of one word in word_set is found in
+       the same cell as the initial letter of another word in word_set.
 
     Let's try two approaches:
       (1) Tag the neighbors of a prefix match cell on what direction are
@@ -88,23 +89,66 @@ def search(word_set, letter_block):
           relationship. The tree must allow us access to a node's parent.
           This way, we can derive from what direction do we proceed
           (same as the direction a node's parent took).
+
+    Returns a dictionary of all the words in word_set found and a pair of tuples
+    indicating the start indices of the word in the grid and the end indices
+    (direction can then be inferred).
     """
     block_height = len(letter_block)
     block_width = len(letter_block[0])
+    found_words = dict()
     
     for row in range(block_height):
         for col in range(block_width):
             neighbors = get_neighbors(row, col, block_height, block_width)
+            original_prefix = letter_block[row][col]
             match_prefix = ""
-
+            
+            # DFS on all neighbors
             while neighbors:
                 current_cell = neighbors.pop()
-                match_prefix = letter_block[current_cell[0]][current_cell[1]]
-                prefix_matches = search_startswith(match_prefix)
+                # PROBLEM
+                match_prefix += letter_block[current_cell[0]][current_cell[1]]
+                prefix_matches = search_startswith(match_prefix, word_set)
                 
                 if prefix_matches:
+                    # TEST CASE: neighbors does not get extended (dead-end, possibly).
+                    # By next iteration, we must be considering the next neighbor of our origin cell.
                     if len(current_cell) >= 3:
                         neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width, current_cell[2]))
                     else:
                         # Only happens once
                         neighbors.extend(get_neighbors(current_cell[0], current_cell[1], block_height, block_width))
+                else:
+                    # Return this to original prefix since at next turn, we must be considering the next
+                    # neighbor of our origin cell.
+                    match_prefix = original_prefix
+
+                if match_prefix in word_set:
+                    found_words[match_prefix] = ((row, col), current_cell)
+
+            return found_words
+
+class FunctionTest(unittest.TestCase):
+    
+    def test_search(self):
+        word_list = ["connect", "praxis", "genius", "compute", "free", "mining"]
+        word_grid = ["gacbcpcdef", "geohorijkl", "mnnomapqrs", "tunipxvwxy", "freeuizgab", "cdcetsnfgh", "ijtkeilmno", "pqrsntuvwx", "yzaibcdefg", "himjklmnop"]
+        self.assertEqual(len(word_grid), 10)
+        
+        for row in word_grid:
+            print("Checking row " + str(row))
+            self.assertEqual(len(row), 10)
+
+        expected_output = dict()
+        expected_output["connect"] = ((0, 2), (6, 2))
+        expected_output["praxis"] = ((0, 5), (5, 5))
+        expected_output["genius"] = ((0, 0), (5, 5))
+        expected_output["compute"] = ((0, 4), (6, 4))
+        expected_output["free"] = ((4, 0), (4, 3))
+        expected_output["mining"] = ((9, 2), (4, 7))
+
+        self.assertEqual(expected_output, search(word_list, word_grid))
+
+if __name__ == "__main__":
+    unittest.main()
