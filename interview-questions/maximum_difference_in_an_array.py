@@ -65,7 +65,10 @@ def max_diff_lin(numlist):
 
     minmember = min(numlist)
     mindex = numlist.index(minmember)
-    maxpair = max(numlist[mindex:limit-1])
+    try:
+        maxpair = max(numlist[mindex:limit-1])
+    except ValueError:
+        return (minpair_index, maxdex)
     maxpair_index = numlist.index(maxpair)
 
     diff1 = numlist[maxdex] - numlist[minpair_index]
@@ -88,6 +91,7 @@ class FunctionsTest(unittest.TestCase):
         self.assertEqual((3, 4), max_diff_lin([4,3,9,1,8,2,6,7,5]))
         self.assertEqual((1, 2), max_diff_lin([4,2,9,1,8,3,6,7,5]))
         self.assertEqual((3, 7), max_diff_lin([4,3,9,1,2,6,7,8,5]))
+        self.assertEqual((0, 4), max_diff_lin([1,2,3,4,5]))
         self.assertEqual((0, 0), max_diff_lin([5,4,3,2,1]))
 
 if __name__ == "__main__":
