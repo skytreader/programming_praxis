@@ -37,7 +37,6 @@ def partition(dataset, start_index=None, limit=None):
     dataset[last_index], dataset[pivot_index] = dataset[pivot_index], dataset[last_index]
     pivot_index = last_index
     
-    # FIXME  Assuming that the item in start_index is less than pivot!
     less_index = start_index - 1
     hi_index = less_index + 1
 
@@ -60,14 +59,29 @@ def select(dataset, k):
     Assert:
         k <= len(dataset)
     """
-    if k > len(dataset):
+    limit = len(dataset)
+    if k > limit:
         raise IndexError("k should always be leq len(dataset)")
     
     partition_start = 0
     partition_limit = len(dataset)
+    start = 0
+    print("Virgin: " + str(dataset))
+    while (limit - 1 - start) > 1:
+        # What if we partition on the kth smallest item itself? :\
+        partition_index = partition(dataset, start, limit)
+        print(dataset)
+        print(partition_index)
+        smaller_len = partition_index - start + 1
+        larger_len = limit - partition_index
+        
+        # What if one of the lens is equal to k?
+        if smaller_len > k:
+            limit = partition_index
+        else:
+            start = partition_index
 
-    while True:
-        pass
+    return dataset[start]
 
 class FunctionsTest(unittest.TestCase):
     
@@ -105,6 +119,11 @@ class FunctionsTest(unittest.TestCase):
     def test_partition(self):
         for i in range(10):
             self.partition_test()
+
+    def test_select(self):
+        main_list = [3, 1, 4, 1, 5, 9, 2, 6, 5]
+        # sorted this is [1, 1, 2, 3, 4, 5, 5, 6, 9]
+        self.assertEqual(select(main_list, 5), 4)
 
 if __name__ == "__main__":
     unittest.main()
