@@ -70,21 +70,27 @@ def select(dataset, k):
     partition_index = -1
     start = 0
     print("Virgin: " + str(dataset))
+    print("Looking for " + str(k) + "th percentile.")
     # If there are exactly k items less than current partition, terminate
     # (We found it yay!)
     spam = k - 1
     while spam != partition_index:
         partition_index = partition(dataset, start, limit)
-        #print(dataset)
-        #print(partition_index)
+        print("=============")
+        print("dataset: " + str(dataset))
+        print("partition_index: " + str(partition_index))
+        print("start: " + str(start))
         smaller_len = partition_index - start + 1
+        print("smaller_len: " + str(smaller_len))
         larger_len = limit - partition_index
         
         # What if one of the lens is equal to k?
-        if smaller_len > k:
+        if smaller_len >= k:
             limit = partition_index
+            print("Smaller len clause")
         else:
             start = partition_index
+            print("else clause")
 
     return dataset[partition_index]
 
