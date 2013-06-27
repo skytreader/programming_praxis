@@ -56,6 +56,8 @@ def select(dataset, k):
     """
     Selects the kth percentile in the dataset.
 
+    Verify according to Programming Praxis
+
     Assert:
         k <= len(dataset)
     """
@@ -65,13 +67,16 @@ def select(dataset, k):
     
     partition_start = 0
     partition_limit = len(dataset)
+    partition_index = -1
     start = 0
     print("Virgin: " + str(dataset))
-    while (limit - 1 - start) > 1:
-        # What if we partition on the kth smallest item itself? :\
+    # If there are exactly k items less than current partition, terminate
+    # (We found it yay!)
+    spam = k - 1
+    while spam != partition_index:
         partition_index = partition(dataset, start, limit)
-        print(dataset)
-        print(partition_index)
+        #print(dataset)
+        #print(partition_index)
         smaller_len = partition_index - start + 1
         larger_len = limit - partition_index
         
@@ -81,7 +86,7 @@ def select(dataset, k):
         else:
             start = partition_index
 
-    return dataset[start]
+    return dataset[partition_index]
 
 class FunctionsTest(unittest.TestCase):
     
@@ -124,6 +129,7 @@ class FunctionsTest(unittest.TestCase):
         main_list = [3, 1, 4, 1, 5, 9, 2, 6, 5]
         # sorted this is [1, 1, 2, 3, 4, 5, 5, 6, 9]
         self.assertEqual(select(main_list, 5), 4)
+        self.assertEqual(select(main_list, 8), 6)
 
 if __name__ == "__main__":
     unittest.main()
