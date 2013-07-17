@@ -12,8 +12,9 @@ UNFINISHED
 def partition(dataset, start_index=None, limit=None):
     """
     Partitions dataset. The dataset is modified in the function.
-    Returns the post-partitioning index of the pivot used.Test
-    with equal start_index and limit.
+    Returns the post-partitioning index (in the array, regardless
+    of start_index and limit) of the pivot used. Test with equal
+    start_index and limit.
     """
     if start_index is None:
         start_index = 0
@@ -64,6 +65,7 @@ def select(dataset, k):
     limit = len(dataset)
     if k > limit:
         raise IndexError("k should always be leq len(dataset)")
+    original_limit = limit
     
     partition_start = 0
     partition_limit = len(dataset)
@@ -71,6 +73,7 @@ def select(dataset, k):
     start = 0
     print("Virgin: " + str(dataset))
     print("Looking for " + str(k) + "th percentile.")
+    print("Limit is " + str(limit))
     # If there are exactly k items less than current partition, terminate
     # (We found it yay!)
     spam = k - 1
@@ -80,16 +83,18 @@ def select(dataset, k):
         print("dataset: " + str(dataset))
         print("partition_index: " + str(partition_index))
         print("start: " + str(start))
-        smaller_len = partition_index - start + 1
-        print("smaller_len: " + str(smaller_len))
-        larger_len = limit - partition_index
+        smaller_len = partition_index - start# + 1
+        larger_len = original_limit - partition_index
+        print("larger_len: " + str(larger_len))
         
-        # What if one of the lens is equal to k?
-        if smaller_len >= k:
-            limit = partition_index
-            print("Smaller len clause")
-        else:
+        # What happens if the partition is exactly in the middle?
+        if larger_len >= k:
+            #limit = partition_index
             start = partition_index
+            print("if clause")
+        else:
+            #start = partition_index
+            limit = partition_index
             print("else clause")
 
     return dataset[partition_index]
