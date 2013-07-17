@@ -5,6 +5,8 @@ import unittest
 
 """
 Interface and implementations of a forest abstract data type.
+
+(Taken from my programming praxis repo~Chad)
 """
 
 class Forest(object):
