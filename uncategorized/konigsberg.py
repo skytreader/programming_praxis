@@ -40,3 +40,8 @@ def is_eulerian_path(graph):
             return False
 
     return odd_count == 2
+
+class EulerianTests(unittest.TestCase):
+    
+    def setUp(self):
+        self.eulerian4 = AdjacencyLists()
