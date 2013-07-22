@@ -7,9 +7,6 @@ Package for graph data structures.
 """
 
 class NotInNodesException(Exception):
-    """
-    Will I really actually use this?
-    """
 
     def __init__(self, value):
         self.value = value
@@ -104,6 +101,7 @@ class AdjacencyLists(Graph):
     """
 
     def __init__(self):
+        # self.__nodes is the adjacency list
         self.__nodes = []
         self.__added_nodes = set()
 
