@@ -7,9 +7,6 @@ Package for graph data structures.
 """
 
 class NotInNodesException(Exception):
-    """
-    Will I really actually use this?
-    """
 
     def __init__(self, value):
         self.value = value
@@ -29,6 +26,10 @@ class Graph(object):
     """
     General class for graphs. Add objects for nodes and equality must
     be defined for the nodes.
+
+    All methods that make use of the current set of nodes in the graph
+    (not methods that add a node to the graph) should throw a
+    NotInNodesException if given a node that is not yet in the graph.
     """
 
     def is_reachable(self, n1, n2):
@@ -54,6 +55,12 @@ class Graph(object):
         """
         pass
     
+    def add_nodes(self, nodes):
+        """
+        Convenience method that adds nodes as a list.
+        """
+        pass
+    
     def remove_node(self, node):
         """
         Removes the given node from the graph. All incoming
@@ -65,6 +72,24 @@ class Graph(object):
         """
         Makes n2 reachable from n1 (but not necessarily n1
         from n2).
+        """
+        pass
+
+    def get_indegree(self, n1):
+        """
+        For a directed graph, the number of vertices which can
+        directly reach n1 (i.e., those who have n1 as a neighbor).
+        For undirected graphs, get_indegree should return the same
+        value as get_outdegree.
+        """
+        pass
+
+    def get_outdegree(self, n1):
+        """
+        For a directed graph, the number of vertices which
+        directly leave n1 (i.e., the neighbors of n1). For
+        undirected graphs, get_outdegree should return the
+        same value as get_indegree.
         """
         pass
 
@@ -82,20 +107,21 @@ class AdjacencyLists(Graph):
     """
 
     def __init__(self):
+        # self.__nodes is the adjacency list
         self.__nodes = []
         self.__added_nodes = set()
 
     def get_neighbors(self, n1):
         """
-        Returns a list of all the nodes reachable via n1.
-        Returns None if n1 has no neighbors or if n1 is not
-        even in the graph.
+        Returns a list of all the nodes reachable via n1. Returns an 
+        empty list if n1 has no neighbors. Throws a NotInNodesException
+        if n1 is not even in the graph.
         """
         for row in self.__nodes:
             if row[0] == n1:
                 return row[1:len(row)]
 
-        return None
+        raise NotInNodesException(n1)
 
     def is_reachable(self, n1, n2):
         n1_neighbors = self.get_neighbors(n1)
@@ -112,13 +138,32 @@ class AdjacencyLists(Graph):
         """
         return self.__added_nodes
 
+    def __add(self, node):
+        """
+        Adds the node, assuming that the node is _not_ yet
+        added (hence, not violating the purpose of DuplicateNodesException.
+        """
+        self.__added_nodes.add(node)
+        self.__nodes.append([node])
+
     def add_node(self, node):
         # TODO Make thread safe
         if node in self.__added_nodes:
             raise DuplicateNodeException(node)
         else:
-            self.__added_nodes.add(node)
-            self.__nodes.append([node])
+            self.__add(node)
+
+    def add_nodes(self, nodes):
+        """
+        Adds nodes as a list. Raises DuplicateNodeException
+        if at least one of the nodes is already in the list.
+        """
+        for node in nodes:
+            if node in self.__added_nodes:
+                raise DuplicateNodeException(node)
+
+        for node in nodes:
+            self.__add(node)
 
     def make_neighbor(self, n1, n2):
         """
@@ -157,11 +202,45 @@ class AdjacencyLists(Graph):
             if row[0] == node:
                 self.__nodes.remove(row)
 
+    def get_outdegree(self, n1):
+        """
+        Returns the number of nodes reachable from n1. Throws
+        a NotInNodesException if n1 is not in the graph.
+        """
+        neighbors = self.get_neighbors(n1)
+        return len(neighbors)
+
+    def get_indegree(self, n1):
+        """
+        Returns the number of nodes that can reach n1. Throws
+        a NotInNodesException if n1 is not in the graph.
+        """
+        if n1 in self.added_nodes:
+            outcount = 0
+            
+            for node in self.added_nodes:
+                outcount += 1 if self.is_reachable(node, n1) else 0
+
+            return outcount
+        else:
+            raise NotInNodesException(n1)
+
+class UndirectedAdjList(AdjacencyLists):
+    """
+    Creates undirected graphs with an adjacency list
+    representation.
+    """
+
+    def make_neighbor(self, n1, n2):
+        super(UndirectedAdjList, self).make_neighbor(n1, n2)
+        super(UndirectedAdjList, self).make_neighbor(n2, n1)
+
+############## HERE BE UNIT TESTS ##############
+
 class AdjacencyListTest(unittest.TestCase):
     """
     To test:
         - Behavior when introducing deep and shallow copies.
-        - 
     """
 
     def setUp(self):
@@ -183,6 +262,25 @@ class AdjacencyListTest(unittest.TestCase):
         self.four_nodes.add_node(self.test_node)
         self.assertTrue(self.test_node in self.four_nodes.added_nodes)
         self.assertRaises(DuplicateNodeException, self.four_nodes.add_node, "node1")
+
+    def test_add_nodes(self):
+        """
+        Adds lists of possible nodes.
+        """
+        # should be able to insert this fine
+        test_nodes = ["the", "television's", "selling", "plastic", "figurine", "for", "leaders"]
+        # none of these should be inserted---intersects with "the"
+        duplicate_test_nodes = ["scared", "of", "losing", "all", "the", "time"]
+        self.four_nodes.add_nodes(test_nodes)
+
+        for node in test_nodes:
+            self.assertTrue(node in self.four_nodes.added_nodes)
+
+        self.assertRaises(DuplicateNodeException, self.four_nodes.add_nodes, duplicate_test_nodes)
+
+        for node in duplicate_test_nodes:
+            if node != "the":
+                self.assertTrue(node not in self.four_nodes.added_nodes)
 
     def test_remove_node(self):
         """
@@ -239,9 +337,53 @@ class AdjacencyListTest(unittest.TestCase):
         n3_expected_neighbors = set(["node1", "node4"])
         self.assertEqual(n3_expected_neighbors, set(n3_neighbors))
 
+        # Isolated node test
+        self.four_nodes.add_node("five")
+        self.assertTrue(self.four_nodes.get_neighbors("five") == [])
+
+        # NotInNodesException test
+        self.assertRaises(NotInNodesException, self.four_nodes.get_neighbors, "does not exist")
+
     def test_get_neighbors(self):
         self.construct_four_nodes()
         self.get_neighbors_test()
+
+    def test_get_indegree(self):
+        n1_neighbors = self.four_nodes.get_neighbors("node1")
+        self.assertEqual(self.four_nodes.get_indegree("node1"), len(n1_neighbors))
+
+        # NotInNodesException test
+        self.assertRaises(NotInNodesException, self.four_nodes.get_indegree, "does not exist")
+
+    def test_get_outdegree(self):
+        n1_neighbors = self.four_nodes.get_neighbors("node1")
+        self.assertEqual(self.four_nodes.get_outdegree("node1"), len(n1_neighbors))
+
+class UndirectedAdjListTest(AdjacencyListTest):
+    
+    def setUp(self):
+        super(UndirectedAdjListTest, self).setUp()
+
+        self.four_nodes = UndirectedAdjList()
+        self.four_nodes.add_node("node1")
+        self.four_nodes.add_node("node2")
+        self.four_nodes.add_node("node3")
+        self.four_nodes.add_node("node4")
+
+    def test_neighbor(self):
+        self.four_nodes.make_neighbor("node1", "node2")
+        self.assertTrue(self.four_nodes.is_reachable("node1", "node2"))
+        self.assertTrue(self.four_nodes.is_reachable("node2", "node1"))
+
+    def test_degree_eq(self):
+        """
+        Tests that the in degree and out degree of every node in the graph
+        is equal.
+        """
+        nodes = self.four_nodes.added_nodes
+
+        for n in nodes:
+            self.assertEqual(self.four_nodes.get_indegree(n), self.four_nodes.get_outdegree(n))
 
 if __name__ == "__main__":
     unittest.main()
