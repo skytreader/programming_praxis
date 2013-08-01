@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import sys
-sys.path.append("../lib")
+sys.path.append("../dry/lib")
 import graphs
 
 """
