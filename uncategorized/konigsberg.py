@@ -54,7 +54,7 @@ def eulerian_path(graph):
         cur_node = None
 
         for node in graph.added_nodes:
-            if graph.get_outdegree(node):
+            if graph.get_outdegree(node) % 2:
                 cur_node = node
                 break
         
@@ -102,7 +102,7 @@ class EulerianTests(unittest.TestCase):
         self.eulerian4_path.make_neighbor("n4", "n3")
         self.eulerian4_path.make_neighbor("n3", "n2")
 
-    def test__eulerian_circuit(self):
+    def test_eulerian_circuit(self):
         self.assertTrue(is_eulerian_circuit(self.eulerian4_circuit))
         self.assertFalse(is_eulerian_circuit(self.eulerian4_path))
 
@@ -111,7 +111,15 @@ class EulerianTests(unittest.TestCase):
         self.assertFalse(is_eulerian_path(self.eulerian4_circuit))
 
         # Test determining actual Eulerian path
-        eulerian_path = []
+        eulerianpath = [
+            set(["n2", "n1"]),
+            set(["n1", "n3"]),
+            set(["n3", "n2"]),
+            set(["n2", "n4"]),
+            set(["n4", "n3"]),
+        ]
+
+        self.assertEqual(eulerianpath, eulerian_path(self.eulerian4_path))
 
         # Destroy the Eulerian path in eulerian4_path
         self.eulerian4_path.make_neighbor("n1", "n4")
