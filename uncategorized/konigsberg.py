@@ -56,25 +56,20 @@ def eulerian_path(graph):
         for node in graph.added_nodes:
             if graph.get_outdegree(node) % 2:
                 cur_node = node
-                #print("LOG found a node with odd degree: " + str(node))
                 break
         
         node_stack = [cur_node]
         cur_neighbors = graph.get_neighbors(cur_node)
 
         while node_stack and cur_neighbors:
-            #print("LOG Iteration: " + str(node_stack) + " " + str(cur_neighbors))
-            #print("LOG Will proceed? " + str(node_stack and cur_neighbors))
             if cur_neighbors:
                 # Pick a neighbor which will make an edge that
                 # is not yet removed.
-                #print("LOG " + str(cur_node) + " has neighbors: " + str(cur_neighbors))
                 chosen_neighbor = None
                 for neighbor in cur_neighbors:
                     edge = set([cur_node, neighbor])
                     if edge not in removed_edges:
                         chosen_neighbor = neighbor
-                        #print("LOG Chose neighbor for " + str(cur_node) + " : " + str(neighbor))
                         break
 
                 if chosen_neighbor is None:
@@ -139,6 +134,8 @@ class EulerianTests(unittest.TestCase):
         ]
 
         self.assertEqual(eulerianpath, eulerian_path(self.eulerian4_path))
+        self.assertEqual(None, eulerian_path(self.eulerian4_circuit))
+        self.assertEqual(None, eulerian_path(self.star_circuit))
 
         # Destroy the Eulerian path in eulerian4_path
         self.eulerian4_path.make_neighbor("n1", "n4")
