@@ -56,26 +56,34 @@ def eulerian_path(graph):
         for node in graph.added_nodes:
             if graph.get_outdegree(node) % 2:
                 cur_node = node
+                #print("LOG found a node with odd degree: " + str(node))
                 break
         
         node_stack = [cur_node]
         cur_neighbors = graph.get_neighbors(cur_node)
 
         while node_stack and cur_neighbors:
-            # Pick a neighbor which will make an edge that
-            # is not yet removed.
-            chosen_neighbor = None
-            for neighbor in cur_neighbors:
-                edge = set([cur_node, neighbor])
-                if edge not in removed_edges:
-                    chosen_neighbor = neighbor
+            #print("LOG Iteration: " + str(node_stack) + " " + str(cur_neighbors))
+            #print("LOG Will proceed? " + str(node_stack and cur_neighbors))
+            if cur_neighbors:
+                # Pick a neighbor which will make an edge that
+                # is not yet removed.
+                #print("LOG " + str(cur_node) + " has neighbors: " + str(cur_neighbors))
+                chosen_neighbor = None
+                for neighbor in cur_neighbors:
+                    edge = set([cur_node, neighbor])
+                    if edge not in removed_edges:
+                        chosen_neighbor = neighbor
+                        #print("LOG Chose neighbor for " + str(cur_node) + " : " + str(neighbor))
+                        break
+
+                if chosen_neighbor is None:
                     break
 
-            # What happens if chosen_neighbor is None ?
-            if chosen_neighbor:
                 node_stack.append(cur_node)
                 removed_edges.append(set([cur_node, chosen_neighbor]))
                 cur_node = chosen_neighbor
+                cur_neighbors = graph.get_neighbors(cur_node)
             else:
                 # Backtrack here...
                 cur_node = node_stack.pop()
@@ -114,9 +122,9 @@ class EulerianTests(unittest.TestCase):
         eulerianpath = [
             set(["n2", "n1"]),
             set(["n1", "n3"]),
-            set(["n3", "n2"]),
-            set(["n2", "n4"]),
-            set(["n4", "n3"]),
+            set(["n3", "n4"]),
+            set(["n4", "n2"]),
+            set(["n2", "n3"]),
         ]
 
         self.assertEqual(eulerianpath, eulerian_path(self.eulerian4_path))
