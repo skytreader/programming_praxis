@@ -110,12 +110,23 @@ class EulerianTests(unittest.TestCase):
         self.eulerian4_path.make_neighbor("n4", "n3")
         self.eulerian4_path.make_neighbor("n3", "n2")
 
+        self.star_circuit = UndirectedAdjList()
+        self.star_circuit.add_nodes(["n1", "n2", "n3", "n4", "n5"])
+        self.star_circuit.make_neighbor("n1", "n2")
+        self.star_circuit.make_neighbor("n1", "n4")
+        self.star_circuit.make_neighbor("n3", "n5")
+        self.star_circuit.make_neighbor("n3", "n2")
+        self.star_circuit.make_neighbor("n4", "n5")
+        self.star_circuit.make_neighbor("n4", "n1")
+
     def test_eulerian_circuit(self):
         self.assertTrue(is_eulerian_circuit(self.eulerian4_circuit))
         self.assertFalse(is_eulerian_circuit(self.eulerian4_path))
+        self.assertTrue(is_eulerian_circuit(self.star_circuit))
 
     def test_eulerian_path(self):
         self.assertTrue(is_eulerian_path(self.eulerian4_path))
+        self.assertFalse(is_eulerian_path(self.star_circuit))
         self.assertFalse(is_eulerian_path(self.eulerian4_circuit))
 
         # Test determining actual Eulerian path
