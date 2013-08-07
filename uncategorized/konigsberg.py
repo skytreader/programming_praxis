@@ -58,17 +58,6 @@ def nodes_to_edges(nodes):
 
     return edge_path
 
-def eulerian_circuit(graph):
-    """
-    Find an Eulerian circuit in the graph, if one exists. Returns the sequence
-    of nodes that makes the path. Returns None if an Eulerian circuit is not
-    possible.
-    """
-    if is_eulerian_circuit(graph):
-        pass
-    else:
-        return None
-
 def path_start_node(graph):
     """
     Start node function for finding Eulerian paths. Assumes that an Eulerian
@@ -83,19 +72,23 @@ def circuit_start_node(graph):
     Start node function for finding Eulerian circuits. Assumes that an Eulerian
     circuit is possible in the graph.
     """
-    return random.choice(graph.added_nodes)
+    return random.choice(list(graph.added_nodes))
 
-def eulerian(start_fun, graph):
+def eulerian(start_fun, verification, graph):
     """
     Abstraction function for getting an Eulerian path/circuit in the graph. The
     difference will be in how the initial node is chosen.
 
     start_fun is a function that takes in a graph and returns an appropriate
     initial node.
+
+    verification is a function that checks whether a graph has an Eulerian
+    path/circuit. Note that it must coincide with the start_fun.
     """
-    if is_eulerian_path(graph):
+    if verification(graph):
         removed_edges = []
         cur_node = start_fun(graph)
+        print("LOG Initial node chosen: " + str(cur_node))
         node_stack = [cur_node]
         cur_neighbors = graph.get_neighbors(cur_node)
 
@@ -110,16 +103,20 @@ def eulerian(start_fun, graph):
                         chosen_neighbor = neighbor
                         break
 
+                print("LOG Chose a neighbor: " + str(chosen_neighbor))
+
                 if chosen_neighbor is None:
                     break
 
                 node_stack.append(cur_node)
                 removed_edges.append(set([cur_node, chosen_neighbor]))
                 cur_node = chosen_neighbor
+                print("LOG Current node is now: " + cur_node)
                 cur_neighbors = graph.get_neighbors(cur_node)
             else:
                 # Backtrack here...
                 cur_node = node_stack.pop()
+                print("LOG Backtracking! Current node is now: " + str(cur_node))
 
         return removed_edges
     else:
@@ -152,17 +149,37 @@ class EulerianTests(unittest.TestCase):
         self.star_circuit.make_neighbor("n4", "n5")
         self.star_circuit.make_neighbor("n4", "n1")
 
+        self.line = UndirectedAdjList()
+        self.line.add_nodes(["n1", "n2", "n3", "n4"])
+        self.line.make_neighbor("n1", "n2")
+        self.line.make_neighbor("n2", "n3")
+        self.line.make_neighbor("n3", "n4")
+
     def test_eulerian_circuit(self):
         self.assertTrue(is_eulerian_circuit(self.eulerian4_circuit))
         self.assertFalse(is_eulerian_circuit(self.eulerian4_path))
         self.assertTrue(is_eulerian_circuit(self.star_circuit))
+        self.assertFalse(is_eulerian_circuit(self.line))
+        
+        # TODO Characterize Eulerian circuits for unit test checking
+        present_nodes = set(["n1", "n2", "n3", "n4"])
+        
+        circuit = eulerian(circuit_start_node, is_eulerian_circuit, self.eulerian4_circuit)
+        print(str(circuit))
+        foo = present_nodes == set(circuit)
+        self.assertTrue(foo)
+
+        self.assertEqual(None, eulerian(circuit_start_node,
+            is_eulerian_circuit, self.eulerian4_circuit))
 
     def test_eulerian_path(self):
         self.assertTrue(is_eulerian_path(self.eulerian4_path))
         self.assertFalse(is_eulerian_path(self.star_circuit))
         self.assertFalse(is_eulerian_path(self.eulerian4_circuit))
+        self.assertTrue(is_eulerian_path(self.line))
 
         # Test determining actual Eulerian path
+        # TODO Better characterization of Eulerian paths.
         eulerianpath = [
             set(["n2", "n1"]),
             set(["n1", "n3"]),
@@ -171,9 +188,12 @@ class EulerianTests(unittest.TestCase):
             set(["n2", "n3"]),
         ]
 
-        self.assertEqual(eulerianpath, eulerian(path_start_node, self.eulerian4_path))
-        self.assertEqual(None, eulerian(path_start_node, self.eulerian4_circuit))
-        self.assertEqual(None, eulerian(path_start_node, self.star_circuit))
+        self.assertEqual(eulerianpath, eulerian(path_start_node,
+            is_eulerian_path, self.eulerian4_path))
+        self.assertEqual(None, eulerian(path_start_node,
+            is_eulerian_path, self.eulerian4_circuit))
+        self.assertEqual(None, eulerian(path_start_node,
+            is_eulerian_path, self.star_circuit))
 
         # Destroy the Eulerian path in eulerian4_path
         self.eulerian4_path.make_neighbor("n1", "n4")
