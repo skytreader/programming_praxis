@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import random
 import sys
 import unittest
 sys.path.append("../dry/lib")
@@ -15,7 +16,6 @@ def is_eulerian_circuit(graph):
     Determines whether an Eulerian circuit exists in the
     given graph.
     """
-    # TODO Graph library is not updated
     for node in graph.added_nodes:
         neighbor_count = len(graph.get_neighbors(node))
 
@@ -41,6 +41,49 @@ def is_eulerian_path(graph):
             return False
 
     return odd_count == 2
+
+def nodes_to_edges(nodes):
+    """
+    Takes in a list of nodes (assuming they form a path) and returns a list of
+    edges describing the same path. A list of edges is represented as a list
+    of sets.
+    """
+    edge_path = []
+    limit = len(nodes) - 1
+    i = 0
+
+    while i < limit:
+        edge_path.append(set([nodes[i], nodes[i + 1]))
+        i += 1
+
+    return edge_path
+
+def eulerian_circuit(graph):
+    """
+    Find an Eulerian circuit in the graph, if one exists. Returns the sequence
+    of nodes that makes the path. Returns None if an Eulerian circuit is not
+    possible.
+    """
+    if is_eulerian_circuit(graph):
+        pass
+    else:
+        return None
+
+def path_start_node(graph):
+    """
+    Start node function for finding Eulerian paths. Assumes that an Eulerian
+    path is possible in the graph.
+    """
+    for node in graph.added_nodes:
+        if graph.get_outdegree(node) % 2:
+            return node
+
+def circuit_start_node(graph):
+    """
+    Start node function for finding Eulerian circuits. Assumes that an Eulerian
+    circuit is possible in the graph.
+    """
+    return random.choice(graph.added_nodes)
 
 def eulerian_path(graph):
     """
