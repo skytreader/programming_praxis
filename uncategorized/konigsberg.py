@@ -53,7 +53,7 @@ def nodes_to_edges(nodes):
     i = 0
 
     while i < limit:
-        edge_path.append(set([nodes[i], nodes[i + 1]))
+        edge_path.append(set([nodes[i], nodes[i + 1]]))
         i += 1
 
     return edge_path
@@ -85,22 +85,17 @@ def circuit_start_node(graph):
     """
     return random.choice(graph.added_nodes)
 
-def eulerian_path(graph):
+def eulerian(start_fun, graph):
     """
-    Find an Eulerian path in the graph, if one exists. Returns
-    the sequence of edges that makes the path. Returns None
-    if an Eulerian path is not possible.
+    Abstraction function for getting an Eulerian path/circuit in the graph. The
+    difference will be in how the initial node is chosen.
+
+    start_fun is a function that takes in a graph and returns an appropriate
+    initial node.
     """
     if is_eulerian_path(graph):
         removed_edges = []
-        # Find a node with an odd number of neighbors
-        cur_node = None
-
-        for node in graph.added_nodes:
-            if graph.get_outdegree(node) % 2:
-                cur_node = node
-                break
-        
+        cur_node = start_fun(graph)
         node_stack = [cur_node]
         cur_neighbors = graph.get_neighbors(cur_node)
 
@@ -176,9 +171,9 @@ class EulerianTests(unittest.TestCase):
             set(["n2", "n3"]),
         ]
 
-        self.assertEqual(eulerianpath, eulerian_path(self.eulerian4_path))
-        self.assertEqual(None, eulerian_path(self.eulerian4_circuit))
-        self.assertEqual(None, eulerian_path(self.star_circuit))
+        self.assertEqual(eulerianpath, eulerian(path_start_node, self.eulerian4_path))
+        self.assertEqual(None, eulerian(path_start_node, self.eulerian4_circuit))
+        self.assertEqual(None, eulerian(path_start_node, self.star_circuit))
 
         # Destroy the Eulerian path in eulerian4_path
         self.eulerian4_path.make_neighbor("n1", "n4")
