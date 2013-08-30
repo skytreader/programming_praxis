@@ -86,7 +86,7 @@ def eulerian(start_fun, verification, graph):
     path/circuit. Note that it must coincide with the start_fun.
     """
     if verification(graph):
-        removed_edges = []
+        path = []
         cur_node = start_fun(graph)
         print("LOG Initial node chosen: " + str(cur_node))
         node_stack = [cur_node]
@@ -99,7 +99,7 @@ def eulerian(start_fun, verification, graph):
                 chosen_neighbor = None
                 for neighbor in cur_neighbors:
                     edge = set([cur_node, neighbor])
-                    if edge not in removed_edges:
+                    if edge not in path:
                         chosen_neighbor = neighbor
                         break
 
@@ -109,7 +109,7 @@ def eulerian(start_fun, verification, graph):
                     break
 
                 node_stack.append(cur_node)
-                removed_edges.append(set([cur_node, chosen_neighbor]))
+                path.append(cur_node)
                 cur_node = chosen_neighbor
                 print("LOG Current node is now: " + cur_node)
                 cur_neighbors = graph.get_neighbors(cur_node)
@@ -118,7 +118,7 @@ def eulerian(start_fun, verification, graph):
                 cur_node = node_stack.pop()
                 print("LOG Backtracking! Current node is now: " + str(cur_node))
 
-        return removed_edges
+        return path
     else:
         return None
 
