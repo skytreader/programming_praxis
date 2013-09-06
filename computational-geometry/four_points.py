@@ -14,42 +14,34 @@ def dist(p1, p2):
     """
     return ((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2)
 
-def is_within_tolerance(v1, v2, tolerance = 0.0001):
-    return abs(v1 - v2) <= tolerance
-
-def __has_same_tolerance(p1, vs):
-    for v in vs:
-        if is_within_tolerance(p1, v):
-            return True
-
-    return False
-
-def __possible_square_corner(p1, other_points):
+def __get_distance_set(fixed, pointset):
     """
-    Consider only the first three elements of other_points. Return true if at
-    least two points in other_points have the same distance from p1.
+    Returns the distance of fixed point to each point in pointset. The return
+    list is sorted.
     """
-    similar = 0
-    prevvals = []
+    distance_set = []
 
-    for i in range(4):
-        d = dist(p1, other_points[i])
-        if __has_same_tolerance(d, prevvals):
-            similar += 1
-        else:
-            prevvals.append(d)
-    
-    return similar == 1
+    for p in pointset:
+        distance_set.append(dist(fixed, p))
+
+    distance_set.sort()
+
+    return distance_set
 
 def is_square(points):
     """
     Checks if the given four points are squares.
     """
-    for p in points:
-        if not __possible_square_corner(p, points):
-            return False
-
-    return True
+    if len(set(points)) != 4:
+        return False
+    # Pick the first point and get its distance to the three other points.
+    p0_distances = __get_distance_set(points[0], (points[1], points[2],
+      points[3]))
+    # Pick the second point and get its distance to the three other points.
+    p1_distances = __get_distance_set(points[1], (points[0], points[2],
+      points[3]))
+    
+    return p0_distances == p1_distances and len(set(p0_distances)) == 2
 
 class FunctionsTest(unittest.TestCase):
     
@@ -57,6 +49,12 @@ class FunctionsTest(unittest.TestCase):
         self.assertTrue(is_square(((0, 0), (0, 1), (1, 1), (1, 0))))
         self.assertTrue(is_square(((0, 0), (2, 1), (3, -1), (1, -2))))
         self.assertTrue(is_square(((0, 0), (1, 1), (0, 1), (1, 0))))
+
+        self.assertFalse(is_square(((0, 0), (0, 2), (3, 2), (3, 0))))
+        self.assertFalse(is_square(((0, 0), (3, 4), (8, 4), (5, 0))))
+        self.assertFalse(is_square(((0, 0), (0, 0), (1, 0), (0, 1))))
+
+        self.assertFalse(is_square(((0, 0), (0, 0), (0, 0), (0, 0))))
 
 if __name__ == "__main__":
     unittest.main()
