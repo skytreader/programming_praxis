@@ -4,7 +4,6 @@ import unittest
 
 """
 http://programmingpraxis.com/2013/01/02/four-points-determine-a-square/
-UNFINISHED
 """
 
 def dist(p1, p2):
