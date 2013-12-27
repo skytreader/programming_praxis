@@ -6,8 +6,14 @@ import unittest
 
 """
 http://programmingpraxis.com/2009/12/11/selection/
-UNFINISHED
 """
+
+def get_pivot(dataset):
+    """
+    Chooses a random pivot element and returns with index.
+    """
+    pivot_index = random.choice(range(len(dataset)))
+    return (data_set[pivot_index], pivot_index)
 
 def partition(dataset, start_index=None, limit=None):
     """
@@ -23,17 +29,28 @@ def partition(dataset, start_index=None, limit=None):
         limit = len(dataset)
 
     subdata = dataset[start_index:limit]
+    # Get the pivot element and its index
     pivot = random.choice(subdata)
+    #print("================================")
+    #print("Range: " + str((start_index, limit)))
+    #print("Pivot element: " + str(pivot))
+    #print("Taken from subdata: " + str(subdata))
     last_index = limit - 1
     pivot_index = -1
     
-    i = start_index
-    while i < limit:
-        if pivot == dataset[i]:
-            pivot_index = i
+    i = 0
+    while i < len(subdata):
+        #print("Comparing pivot and subdata[i]: " + str(pivot) + " " + str(subdata[i]))
+        if pivot == subdata[i]:
+            # Include translation
+            pivot_index = start_index + i
             break
 
         i += 1
+    
+    #print("For " + str(dataset) + " pivot at " + str(pivot_index))
+    #print("Pivot check: " + str(pivot == dataset[pivot_index]))
+    #print("===============================")
 
     dataset[last_index], dataset[pivot_index] = dataset[pivot_index], dataset[last_index]
     pivot_index = last_index
@@ -55,7 +72,7 @@ def partition(dataset, start_index=None, limit=None):
 
 def select(dataset, k):
     """
-    Selects the kth percentile in the dataset.
+    Selects the kth sorted item in the percentile.
 
     Verify according to Programming Praxis
 
@@ -72,7 +89,7 @@ def select(dataset, k):
     partition_index = -1
     start = 0
     print("Virgin: " + str(dataset))
-    print("Looking for " + str(k) + "th percentile.")
+    print("Looking for " + str(k) + "th sorted item.")
     print("Limit is " + str(limit))
     # If there are exactly k items less than current partition, terminate
     # (We found it yay!)
@@ -81,21 +98,26 @@ def select(dataset, k):
         partition_index = partition(dataset, start, limit)
         print("=============")
         print("dataset: " + str(dataset))
-        print("partition_index: " + str(partition_index))
         print("start: " + str(start))
+        print("limit: " + str(limit))
+        print("partition_index: " + str(partition_index))
         smaller_len = partition_index - start# + 1
         larger_len = original_limit - partition_index
         print("larger_len: " + str(larger_len))
         
         # What happens if the partition is exactly in the middle?
-        if larger_len >= k:
+        if k > (partition_index + 1):
             #limit = partition_index
             start = partition_index
-            print("if clause")
-        else:
+            print("get the upper half of the partition")
+        elif k < (partition_index + 1):
             #start = partition_index
             limit = partition_index
-            print("else clause")
+            print("get the lower half of the partition")
+        else:
+            break
+
+    print("Loop terminated")
 
     return dataset[partition_index]
 

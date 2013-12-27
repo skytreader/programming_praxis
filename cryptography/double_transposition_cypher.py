@@ -4,7 +4,6 @@ import unittest
 
 """
 http://programmingpraxis.com/2009/05/29/double-transposition-cipher/
-UNFINISHED
 """
 
 def compute_numeric_key(word):
