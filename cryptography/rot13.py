@@ -1,4 +1,4 @@
-#! usr/bin/env python
+#! /usr/bin/env python3
 
 """
 http://programmingpraxis.com/2009/02/20/rot13/
