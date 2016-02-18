@@ -1,0 +1,3 @@
+[submodule "pydagogical"]
+	path = pydagogical
+	url = https://github.com/skytreader/pydagogical.git
