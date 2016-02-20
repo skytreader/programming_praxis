@@ -36,7 +36,7 @@ def link_nodes(num_nodes):
     for ri, l in enumerate(num_nodes):
         for ci, n in enumerate(l):
             if (ci + n) < len(l):
-                graph.make_neighbors((ri, ci), (ri, ci + n))
+                graph.make_neighbor((ri, ci), (ri, ci + n))
             else:
                 jumps = ci + n
                 _ri, _ci = ri, ci
@@ -63,6 +63,13 @@ class FunctionsTest(unittest.TestCase):
         spam = "In the beginning God created the heaven and the earth."
         spam_lc = [2, 3, 9, 3, 7, 3, 6, 3, 3, 5]
         self.assertEqual(spam_lc, convert_to_letter_counts(spam))
+
+    def test_link_nodes(self):
+        easy = [[1, 2]]
+        graph = AdjacencyLists()
+        graph.add_nodes(((0, 0), (0, 1)))
+        graph.make_neighbor((0, 0), (0, 1))
+        self.assertEqual(graph, link_nodes(easy))
 
 if __name__ == "__main__":
     unittest.main()
