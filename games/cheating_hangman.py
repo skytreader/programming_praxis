@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+import unittest
+
 """
 http://programmingpraxis.com/2011/12/27/cheating-hangman/
 UNFINISHED
@@ -39,7 +41,18 @@ def make_fit_metric(outline):
         
         return True
 
-   return fit
+    return fit
+
+class FunctionsTest(unittest.TestCase):
+    
+    def test_fit_metric(self):
+        outline = "d_g"
+        fit_metric = make_fit_metric(outline)
+
+        self.assertTrue(fit_metric("dog"))
+        self.assertTrue(fit_metric("ddg"))
+        self.assertFalse(fit_metric("cat"))
+        self.assertFalse(fit_metric("dogs"))
 
 class CheatingHangman(object):
     
@@ -63,3 +76,6 @@ class CheatingHangman(object):
 
     def guess(self, guess):
         pass
+
+if __name__ == "__main__":
+    unittest.main()
